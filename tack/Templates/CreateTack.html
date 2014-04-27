@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+        //open popup
+        $("#createBoard").click(function(){
+          $("#overlay_form").fadeIn(1000);
+          positionPopup();
+        });
+
+        //close popup
+        $("#close").click(function(){
+            $("#overlay_form").fadeOut(500);
+        });
+        });
+
+        //position the popup at the center of the page
+        function positionPopup(){
+          if(!$("#overlay_form").is(':visible')){
+            return;
+          }
+          $("#overlay_form").css({
+              left: ($(window).width() - $('#overlay_form').width()) / 2,
+              top: ($(window).width() - $('#overlay_form').width()) / 7,
+              position:'absolute'
+          });
+        }
+
+        //maintain the popup at center of the page when browser resized
+        $(window).bind('resize',positionPopup);
+
+        </script>
+        <style>
+        #overlay_form{
+            position: absolute;
+            border: 5px solid gray;
+            font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+	        font-weight: 400;
+	        font-size: 15px;
+	        color: #1d3c41;
+	        overflow-y: scroll;
+            border-radius: 5px;
+            padding: 10px;
+            background: white;
+            width: 270px;
+            height: 190px;
+        }
+        #createBoard{
+            display: block;
+            width: 200px;
+            text-align: center;
+            padding: 6px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 0 auto;
+        }
+        </style>
+    <meta charset="UTF-8" />
+        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+
+        <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
+        <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
+        <script type="text/javascript">
+        Shadowbox.init();
+        </script>
+        <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
+
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Create Tack</title>
+</head>
+<body>
+    <h1>
+
+    </h1>
+    <div class="container">
+        <section>
+            <div id="container_demo">
+                <div id="wrapper">
+                    <div id="createtack" class="animate form" >
+                        <form action="/saveTack" method="post" enctype="multipart/form-data">
+                        <label for="tack_name">Filename:</label>
+                        <input type="text" name="tack_name" placeholder="Name for your Tack"></br>
+                        <label for="file">Image:</label>
+                        <input type="file" name="file" id="file" required="required" accept="image/*"><br>
+                        <label for="tack_url">URL:</label>
+                        <input type="url" name="tack_url" placeholder="URL to tack"></br>
+                        <label for="tags">Tags:</label>
+                        <input type="text" name="tags" placeholder="Tags Separated by commas"></br>
+                        <label for="board">Add to Existing Board:</label>
+                        <select name="board">
+                            <option value=""></option>
+                            {% for board in boards %}
+                                <option value="{{ board.Name }}">{{ board.Name }}</option>
+                            {% endfor %}
+                        </select><br>
+                        <a href="#" id="createBoard"> OR Create New Board</a>
+                            <br />
+
+                        <input type="submit" name="submit" value="Create!">
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+<form id="overlay_form" action="/saveBoard" style="display:none" method="post" enctype="multipart/form-data" >
+    <label for="board_name">Name:</label>
+    <input type="text" name="board_name" placeholder="Name for your Board"></br>
+    <label for="board_desc">Description:</label>
+    <input type="text" name="board_desc" placeholder="Description for your Board"></br>
+    <label for="board_privacy">Board Visibility:</label><br>
+    <input type="radio" name="board_privacy" value="private">Private
+    <input type="radio" name="board_privacy" value="public">Public<br>
+    <input type="submit" name="submit" value="Create Board!">
+    <a href="#" id="close">Close</a>
+</form>

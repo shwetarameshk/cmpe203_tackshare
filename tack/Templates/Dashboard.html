@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
+    <title>Tackshare</title>
+        <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
+        <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
+        <link rel="stylesheet" href="/static/css/bStyle.css" type="text/css" media="screen">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript">
+        Shadowbox.init();
+        </script>
+        <script type="text/javascript">
+            jQuery(window).load(function() {
+
+        $("#nav > li > a").click(function (e) { // binding onclick
+            if ($(this).parent().hasClass('selected')) {
+                $("#nav .selected div div").slideUp(100); // hiding popups
+                $("#nav .selected").removeClass("selected");
+            } else {
+                $("#nav .selected div div").slideUp(100); // hiding popups
+                $("#nav .selected").removeClass("selected");
+
+                if ($(this).next(".subs").length) {
+                    $(this).parent().addClass("selected"); // display popup
+                    $(this).next(".subs").children().slideDown(200);
+                }
+            }
+            e.stopPropagation();
+        });
+
+        $("body").click(function () { // binding onclick to body
+            $("#nav .selected div div").slideUp(100); // hiding popups
+            $("#nav .selected").removeClass("selected");
+        });
+
+    });
+    </script>
+</head>
+<body>
+<div class="container">
+        <section>
+            <div id="container_demo">
+                <div id="wrapper">
+                    <div id="dashboard" class="animate">
+                        <div class="menu">
+                            <span>
+                                <ul id="nav" class="menu">
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                     <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li ><div align="left"><img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50"></div></li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                                    <li><a href="#"><img src="/static/images/tack.jpg" alt="tack" width="50" height="50"> </a>
+                                        <div class="subs">
+                                            <div>
+                                                <ul>
+                                                    <li><a href="/createtack"><h3>Create Tack</h3></a>
+                                                    </li>
+                                                    <li><a href="/createboard"><h3>Create Board</h3></a>
+                                                    </li>
+                                                    <li><h3>Create From Url</h3>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul id="nav">
+                                    <li><a href="#"><img src="/static/images/gravatar.jpg" alt="profile" width="50" height="50"> </a>
+                                        <div class="subs">
+                                            <div>
+                                                <ul>
+                                                    <li><a href="/logout"><h3>Logout</h3></a></li>
+                                                    <li><a href="/update"><h3>Update Profile</h3> </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                    <section>
+                        <div id="wrapper">Your Boards
+
+                                    {% for board in privateBoards %}
+                                <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
+                                <div class="image">
+                                    <img src="/static/images/board2.png" alt='No Image' width="200" height="200">
+                                    <h2><span>{{ board.Name }}</span></h2>
+                                </div>
+                                </a>
+                                <br><br>
+                                {% endfor %}
+
+                        </div>
+                    </section>
+                    <hr>
+                    <section>
+                        <div id="wrapper">Public Boards:
+
+                                {% for board2 in publicBoards %}
+                                <a id="board_ref" href="/board?boardName={{ board2.Name }}"  title={{ board2.Name }}>
+                                <div class="image">
+                                    <img src="/static/images/board2.png" alt='No Image' width="200" height="200">
+                                    <h2><span>{{ board2.Name }}</span></h2>
+                                </div>
+                                </a>
+                                {% endfor %}
+
+                        </div>
+                    </section>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+.image {
+   position: relative;
+   width: 100%; /* for IE 6 */
+}
+
+h2 {
+   position: absolute;
+    align-self: center;
+   top: 50px;
+   left: 50px;
+   width: 100%;
+}
+
+h2 span {
+   color: black;
+   font: 24px/45px Cambria, "Palatino Linotype";
+   letter-spacing: -1px;
+   background: rgb(0, 0, 0); /* fallback color */
+   background: rgba(0, 0, 0, 0);
+   padding: 10px;
+}
