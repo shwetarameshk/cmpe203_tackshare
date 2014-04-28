@@ -1,6 +1,6 @@
 .image {
    position: relative;
-   width: 100%; /* for IE 6 */
+   width: auto /* for IE 6 */
 }
 
 h2 {
@@ -8,7 +8,7 @@ h2 {
     align-self: center;
    top: 50px;
    left: 50px;
-   width: 100%;
+   width: auto;
 }
 
 h2 span {

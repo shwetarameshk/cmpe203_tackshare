@@ -89,14 +89,16 @@ def update_dashboard(request):
         publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
         return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
     else:
-        Boards(Name=request.POST["board_name"],
-               Description=request.POST["board_desc"],
-               Privacy=request.POST["board_privacy"],
-               username=get_user(request),
-               ).save()
-        privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'privateBoards':privateBoards,'publicBoards':publicBoards})
+        if 'board_name' in request.POST:
+            Boards(Name=request.POST["board_name"],
+                   Description=request.POST["board_desc"],
+                   Privacy=request.POST["board_privacy"],
+                   username=get_user(request),
+                   ).save()
+    privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
+    publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
+    #return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'privateBoards':privateBoards,'publicBoards':publicBoards})
+    return redirect("/")
 
 @csrf_exempt
 def saveTack(request):

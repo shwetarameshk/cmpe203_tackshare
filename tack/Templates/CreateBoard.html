@@ -2,43 +2,67 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
-        <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
-		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
-        <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
 
+        <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript">
+        $('.ui.sidebar')
+            .sidebar()
+        ;
+        $('.demo.sidebar')
+            .sidebar('show')
+        ;
+    </script>
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
 
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title></title>
 </head>
 <body>
-<h1>hello</h1>
-    <div class="container">
-        <section>
-            <div id="container_demo">
-                <div id="wrapper">
-                    <div id="createboard" class="animate form" >
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div id="createboard" class="ui form segment" >
                         <form action="/showdashboard" method="post" enctype="multipart/form-data">
-                        <label for="board_name">Name:</label>
-                        <input type="text" name="board_name" placeholder="Name for your Board"></br>
-                        <label for="board_desc">Description:</label>
-                        <input type="text" name="board_desc" placeholder="Description for your Board"></br>
-                        <label for="board_privacy">Board Visibility:</label><br>
-                            <input type="radio" name="board_privacy" value="Private">Private
-                            <input type="radio" name="board_privacy" value="Public">Public<br>
-                        <input type="submit" name="submit" value="Create!">
+                        <div class="field">
+                            <label for="board_name">Name:</label>
+                            <div class="input">
+                                <input type="text" name="board_name" placeholder="Name for your Board">
+                                </div>
+                        </div>
+                            <div class="field">
+                                <label for="board_desc">Description:</label>
+                                <div class="input">
+                                <input type="text" name="board_desc" placeholder="Description for your Board">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="board_privacy">Board Visibility:</label><br>
+                                <div class="grouped inline fields">
+                                    <div class="field">
+                                      <div class="ui radio checkbox">
+                                        <input id="private" type="radio" name="board_privacy" checked="" value="Private">
+                                        <label for="private">Private</label>
+                                      </div>
+                                    </div>
+                                    <div class="field">
+                                      <div class="ui radio checkbox">
+                                        <input id="public" type="radio" name="board_privacy" value="Public">
+                                        <label for="public">Public</label>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <input class="ui button blue" type="submit" name="submit" value="Create!">
                         </form>
                     </div>
-                </div>
-
             </div>
-        </section>
-    </div>
-<div class="ui button">
-  Follow
+        </div>
+    </section>
 </div>
 
 </body>
