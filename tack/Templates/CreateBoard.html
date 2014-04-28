@@ -3,63 +3,82 @@
 <head>
     <meta charset="UTF-8" />
 
-        <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript">
-        $('.ui.sidebar')
-            .sidebar()
-        ;
-        $('.demo.sidebar')
-            .sidebar('show')
-        ;
-    </script>
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
-		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
 
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title></title>
 </head>
 <body>
+<div class="ui inverted tiered menu">
+    <div class="right menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/logout">Logout</a>
+                <a class="item" href="/update">Update Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <section>
         <div id="container_demo">
             <div id="wrapper">
                 <div id="createboard" class="ui form segment" >
-                        <form action="/showdashboard" method="post" enctype="multipart/form-data">
+                    <form action="/showdashboard" method="post" enctype="multipart/form-data">
                         <div class="field">
                             <label for="board_name">Name:</label>
                             <div class="input">
                                 <input type="text" name="board_name" placeholder="Name for your Board">
-                                </div>
-                        </div>
-                            <div class="field">
-                                <label for="board_desc">Description:</label>
-                                <div class="input">
-                                <input type="text" name="board_desc" placeholder="Description for your Board">
-                                </div>
                             </div>
-                            <div class="field">
-                                <label for="board_privacy">Board Visibility:</label><br>
-                                <div class="grouped inline fields">
-                                    <div class="field">
-                                      <div class="ui radio checkbox">
+                        </div>
+                        <div class="field">
+                            <label for="board_desc">Description:</label>
+                            <div class="input">
+                                <input type="text" name="board_desc" placeholder="Description for your Board">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="board_privacy">Board Visibility:</label><br>
+                            <div class="grouped inline fields">
+                                <div class="field">
+                                    <div class="ui radio checkbox">
                                         <input id="private" type="radio" name="board_privacy" checked="" value="Private">
                                         <label for="private">Private</label>
-                                      </div>
                                     </div>
-                                    <div class="field">
-                                      <div class="ui radio checkbox">
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox">
                                         <input id="public" type="radio" name="board_privacy" value="Public">
                                         <label for="public">Public</label>
-                                      </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         <input class="ui button blue" type="submit" name="submit" value="Create!">
-                        </form>
-                    </div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>

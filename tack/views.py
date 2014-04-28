@@ -155,8 +155,18 @@ def showTacks(request):
     Show tacks for a board
     """
     boardName = request.GET.get('boardName')
-    board = Boards.objects.filter(Name=boardName,username=get_user(request))
+    board = Boards.objects.filter(Name=boardName)
     #board name must be unique
     tackNames = board[0].Tacks
-    tacks = TackImages.objects.filter(Filename__in=tackNames,username= get_user(request))
-    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks})
+    tacks = TackImages.objects.filter(Filename__in=tackNames)
+    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
+
+def displayTack(request):
+    tackName = request.GET.get('tackName')
+    tacks = TackImages.objects.filter(Filename=tackName)
+    tack = tacks[0]
+    return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack})
+
+def shareBoard(request):
+    boardName = request.GET.get('boardName')
+    return render_to_response("ShareBoard.html",{'boardName':boardName})

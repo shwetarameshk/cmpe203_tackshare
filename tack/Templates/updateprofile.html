@@ -6,10 +6,41 @@
         <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title></title>
 </head>
 <body>
+<div class="ui inverted tiered menu">
+    <div class="right menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/logout">Logout</a>
+                <a class="item" href="/update">Update Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
         <div class="container">
         <section>
             <div id="container_demo">

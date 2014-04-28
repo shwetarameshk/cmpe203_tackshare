@@ -2,25 +2,45 @@
 <html>
 <head>
     <title>Tack</title>
-        <meta charset="UTF-8" />
-        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
-        <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
-		<link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 <div class="container">
-        <section>
-            <div id="container_demo">
-                <div id="wrapper">
-                    <div id="displayTack" class="animate" >
-
-
-                    </div>
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div class="ui left floated medium image">
+                    <a class="ui right red corner label" style="text-decoration:none;">
+                        {# add href #}
+                        <i class="star icon"></i>
+                    </a>
+                    <img class="ui large image" src="{{ MEDIA_URL }}{{ tack.image }}"  alt='No Image' title={{ tack.Filename }}>
+                </div>
+                {#                <img class="ui large image" src="{{ MEDIA_URL }}{{ tack.image }}"  alt='No Image' title={{ tack.Filename }}>#}
+                <div class="ui top left attached blue label">{{ tack.Filename }}</div>
+                <br><div class="ui label">
+                <a href="{{ tack.bookmark }}" target="_blank" class="detail"><i class="url icon"></i>{{ tack.bookmark }}</a>
+            </div><br>
+                <div class="ui label">
+                    Tagged as: {{ tack.tags }}
+                </div>
+                <div class="item">
+                    <a class="item" target="_blank" href="/">
+                        <i class="edit icon"></i> Edit Tack
+                    </a>
                 </div>
             </div>
-        </section>
+        </div>
+
+    </section>
 </div>
 </body>
 </html>
