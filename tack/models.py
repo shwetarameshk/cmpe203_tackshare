@@ -29,8 +29,8 @@ class Boards(models.Model):
     Description = models.TextField()
     Privacy = models.TextField()
     username = models.TextField()
-    VisibleToUsers = list()
-    Tacks = list()
+    VisibleToUsers = ListField()
+    Tacks = ListField()
 
     def __unicode__(self):
         return self.Name

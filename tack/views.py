@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
@@ -99,15 +100,21 @@ def update_dashboard(request):
 
 @csrf_exempt
 def saveTack(request):
+    if request.POST["new_board"]!="":
+        boardname = request.POST["new_board"]
+    else:
+        boardname = request.POST["ex_board"]
     TackImages(Filename=request.POST["tack_name"],
                image=request.FILES["file"],
                tags=request.POST["tags"],
                username=get_user(request),
                bookmark=request.POST["tack_url"],
-               board=request.POST["board"]
+               board=boardname
                ).save()
-    board = Boards.objects.filter(Name=request.POST["board"],username=get_user(request))
-    board[0].Tacks.append(request.POST["tack_name"])
+    board = Boards.objects.get(Name=boardname,username=get_user(request))
+    tack_name = request.POST["tack_name"]
+    board.Tacks.append(tack_name)
+    board.save()
     privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
     publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
     tackimages = TackImages.objects.filter(username= get_user(request))
@@ -115,12 +122,18 @@ def saveTack(request):
 
 @csrf_exempt
 def saveBoard(request):
-    Boards(Name=request.POST["board_name"],
-               Description=request.POST["board_desc"],
-               Privacy=request.POST["board_privacy"],
-               username=get_user(request),
-               ).save()
-    return HttpResponse()
+    response_data = {}
+    response_data['result']="failure"
+    try:
+        Boards(Name=request.POST["board_name"],
+                   Description=request.POST["board_desc"],
+                   Privacy=request.POST["board_privacy"],
+                   username=get_user(request),
+                   ).save()
+        response_data['result']="success"
+    except:
+        response_data['result']="failure"
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def createNewBoard(request):
     tack=TackImages(Filename=request.POST["tack_name"],
