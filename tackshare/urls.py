@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^shareBoard', views.shareBoard,name='shareBoard'),
     url(r'^board',views.showTacks,name='showTacks'),
     url(r'^displayTack',views.displayTack,name='displayTacks'),
+    url(r'^createTackInBoard',views.createTackInBoard,name='createTackInBoard'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,

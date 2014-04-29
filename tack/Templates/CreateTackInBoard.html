@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <meta charset="UTF-8" />
+
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
+    <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
+    <script type="text/javascript">
+        Shadowbox.init();
+    </script>
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Create Tack</title>
+</head>
+<body>
+<div class="ui inverted tiered menu">
+    <div class="right menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+                <a class="item" href="/newurltack">Create Tack from Url</a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
+                <a class="item" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div id="createtack" class="ui form segment" >
+                    <form action="/saveTack" method="post" enctype="multipart/form-data">
+                        <div class="field">
+                            <label for="tack_name">Filename:</label>
+                            <div class="input">
+                                <input type="text" name="tack_name" placeholder="Name for your Tack"></br>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="file">Image:</label>
+                            <div class="input">
+                                <input type="file" name="file" id="file" required="required" accept="image/*"><br>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="tack_url">URL:</label>
+                            <div class="input">
+                                <input type="url" name="tack_url" placeholder="URL to tack"></br>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="tags">Tags:</label>
+                            <div class="input">
+                                <input type="text" name="tags" placeholder="Tags Separated by commas"></br>
+                            </div>
+                        </div>
+                        <input type="hidden" name="ex_board" value="{{ boardName }}">
+                        <input type="hidden" name="new_board" value="">
+                        <input class="ui button blue" type="submit" name="submit" value="Create!">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
+
+

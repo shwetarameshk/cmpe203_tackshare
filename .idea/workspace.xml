@@ -26,10 +26,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="views.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tack/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="102" column="0" selection-start="4426" selection-end="4426" vertical-scroll-proportion="0.0" vertical-offset="1428" max-vertical-offset="3791">
+            <state line="121" column="21" selection-start="5091" selection-end="5091" vertical-scroll-proportion="0.64016736" vertical-offset="1751" max-vertical-offset="3876">
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -37,10 +37,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="urls.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tack/urls.py">
+      <file leaf-file-name="CreateTackInBoard.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tack/Templates/CreateTackInBoard.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="25" selection-start="137" selection-end="141" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204">
+            <state line="80" column="69" selection-start="3783" selection-end="3783" vertical-scroll-proportion="-24.26923" vertical-offset="729" max-vertical-offset="1666">
               <folding />
             </state>
           </provider>
@@ -49,7 +49,7 @@
       <file leaf-file-name="CreateTack.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tack/Templates/CreateTack.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="202" column="53" selection-start="8598" selection-end="8598" vertical-scroll-proportion="-48.307693" vertical-offset="2178" max-vertical-offset="3638">
+            <state line="202" column="53" selection-start="8598" selection-end="8598" vertical-scroll-proportion="-14.961538" vertical-offset="3045" max-vertical-offset="3638">
               <folding />
             </state>
           </provider>
@@ -73,10 +73,30 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Dashboard.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Dashboard.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tack/Templates/Dashboard.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="39" selection-start="2940" selection-end="2940" vertical-scroll-proportion="0.5483871" vertical-offset="969" max-vertical-offset="1615">
+            <state line="43" column="12" selection-start="1728" selection-end="2090" vertical-scroll-proportion="-4.576923" vertical-offset="612" max-vertical-offset="1615">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="urls.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tackshare/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="29" column="35" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0" vertical-offset="138" max-vertical-offset="697">
+              <folding>
+                <element signature="e#0#51#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BoardsHome.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tack/Templates/BoardsHome.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="94" selection-start="2597" selection-end="2597" vertical-scroll-proportion="-17.076923" vertical-offset="678" max-vertical-offset="1564">
               <folding />
             </state>
           </provider>
@@ -114,11 +134,12 @@
         <option value="$PROJECT_DIR$/tack/Templates/ShareBoard.html" />
         <option value="$PROJECT_DIR$/tack/Templates/updateprofile.html" />
         <option value="$PROJECT_DIR$/tack/static/css/style4.css" />
-        <option value="$PROJECT_DIR$/tack/Templates/BoardsHome.html" />
         <option value="$PROJECT_DIR$/tack/Templates/CreateTack.html" />
         <option value="$PROJECT_DIR$/tack/Templates/Dashboard.html" />
-        <option value="$PROJECT_DIR$/tack/views.py" />
         <option value="$PROJECT_DIR$/tackshare/urls.py" />
+        <option value="$PROJECT_DIR$/tack/Templates/CreateTackInBoard.html" />
+        <option value="$PROJECT_DIR$/tack/Templates/BoardsHome.html" />
+        <option value="$PROJECT_DIR$/tack/views.py" />
       </list>
     </option>
   </component>
@@ -261,6 +282,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shweta\Documents\MSSE COURSES\203\PROJECT\v4\tack\Templates" />
       <recent name="C:\Users\Shweta\Documents\MSSE COURSES\203\PROJECT\V2.1\V2.1\TackShare\tack\static\css\fonts" />
       <recent name="C:\Users\Shweta\Documents\MSSE COURSES\203\PROJECT\V2.1\V2.1\TackShare\tack\static\css" />
       <recent name="F:\sjsu\Spring 2K14\203\project\V1.1\TackShare\tack\static\images" />
@@ -808,13 +830,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tack/Templates/BoardsHome.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="83" selection-start="437" selection-end="437" vertical-scroll-proportion="30.346153" vertical-offset="959" max-vertical-offset="1411">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tack/Templates/CreateBoard.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="4" selection-start="472" selection-end="551" vertical-scroll-proportion="-1.7995496" vertical-offset="969" max-vertical-offset="1615">
@@ -836,42 +851,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tack/Templates/Dashboard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="12" selection-start="1728" selection-end="2090" vertical-scroll-proportion="-4.576923" vertical-offset="612" max-vertical-offset="1615">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tack/Templates/CreateTack.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="202" column="53" selection-start="8598" selection-end="8598" vertical-scroll-proportion="-48.307693" vertical-offset="2178" max-vertical-offset="3638">
+        <state line="202" column="53" selection-start="8598" selection-end="8598" vertical-scroll-proportion="-14.961538" vertical-offset="3045" max-vertical-offset="3638">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tack/Templates/BoardsHome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="94" selection-start="2597" selection-end="2597" vertical-scroll-proportion="-17.076923" vertical-offset="678" max-vertical-offset="1564">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tack/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="25" selection-start="137" selection-end="141" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204">
+        <state line="6" column="25" selection-start="137" selection-end="141" vertical-scroll-proportion="0.14468086" vertical-offset="0" max-vertical-offset="470">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tack/views.py">
+    <entry file="file://$PROJECT_DIR$/tack/Templates/CreateTackInBoard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="0" selection-start="4426" selection-end="4426" vertical-scroll-proportion="0.0" vertical-offset="1428" max-vertical-offset="3791">
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+        <state line="80" column="69" selection-start="3783" selection-end="3783" vertical-scroll-proportion="-24.26923" vertical-offset="729" max-vertical-offset="1666">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tackshare/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="64" selection-start="1140" selection-end="1140" vertical-scroll-proportion="0.4114053" vertical-offset="189" max-vertical-offset="680">
+        <state line="29" column="35" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0" vertical-offset="189" max-vertical-offset="697">
           <folding>
             <element signature="e#0#51#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tack/Templates/Dashboard.html">
+    <entry file="file://$PROJECT_DIR$/tack/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="39" selection-start="2940" selection-end="2940" vertical-scroll-proportion="0.5483871" vertical-offset="969" max-vertical-offset="1615">
-          <folding />
+        <state line="121" column="21" selection-start="5091" selection-end="5091" vertical-scroll-proportion="0.64016736" vertical-offset="1751" max-vertical-offset="3876">
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

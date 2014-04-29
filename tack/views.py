@@ -105,21 +105,23 @@ def update_dashboard(request):
 @csrf_exempt
 def saveTack(request):
     if request.POST["new_board"]!="":
-        boardname = request.POST["new_board"]
+        boardName = request.POST["new_board"]
     else:
-        boardname = request.POST["ex_board"]
+        boardName = request.POST["ex_board"]
     TackImages(Filename=request.POST["tack_name"],
                image=request.FILES["file"],
                tags=request.POST["tags"],
                username=get_user(request),
                bookmark=request.POST["tack_url"],
-               board=boardname
+               board=boardName
                ).save()
-    board = Boards.objects.get(Name=boardname,username=get_user(request))
+    board = Boards.objects.get(Name=boardName,username=get_user(request))
     tack_name = request.POST["tack_name"]
     board.Tacks.append(tack_name)
     board.save()
-    return redirect("/")
+    tackNames = board.Tacks
+    tacks = TackImages.objects.filter(Filename__in=tackNames)
+    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
 
 @login_required
 @csrf_exempt
@@ -213,5 +215,8 @@ def savesubscription(request):
         favorite=request.POST['onoffswitch3'])
     return redirect("/")
 
-
+@csrf_exempt
+@login_required
+def createTackInBoard(request):
+    return render_to_response("CreateTackInBoard.html",{'user': str(get_user(request)),'boardName':request.GET.get('boardName')})
 

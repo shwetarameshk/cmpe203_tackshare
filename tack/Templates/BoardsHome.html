@@ -62,6 +62,15 @@
 <section class="container">
     <div id="wrapper">
         <div class = "ui five column grid">
+            <div class="column">
+                    <div class="ui segment">
+                        <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" >
+                            <div class="image">
+                                <i class="massive black add sign icon"></i>
+                            </div>
+                        </a>
+                    </div>
+            </div>
             {% for tack in tacks %}
                 <div class="column">
                     <div class="ui segment">
