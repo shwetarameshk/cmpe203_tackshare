@@ -6,7 +6,11 @@
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/onoff.css" />
-    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
+    <title>Email Management</title>
 </head>
 <body>
 <div class="ui inverted tiered menu">
@@ -31,52 +35,61 @@
             <i class="user icon"></i>User<i class="dropdown icon"></i>
             <div class="menu">
                 <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
                 <a class="item" href="/logout">Logout</a>
-                <a class="item" href="/manageemail">EMail Management</a>
             </div>
         </div>
     </div>
 </div>
-<form action="/savesubscriptions" method="post">
-{% for subsc in subscriptions %}
-<label><h1> Subscribe to email notifications when someone </h1></label>
-    <label for="myonoffswitch1"> Follows you
-    <div class="onoffswitch">
-        <input type="hidden" name="onoffswitch1" value="off">
-        <input type="checkbox" name="onoffswitch1" class="onoffswitch-checkbox" id="myonoffswitch1" {% if  subsc.follow == "on" %} checked {% endif %} >
-        <label class="onoffswitch-label" for="myonoffswitch1">
-            <div class="onoffswitch-inner"></div>
-            <div class="onoffswitch-switch"></div>
-        </label>
-    </div>
-        </label>
-    <label for="myonoffswitch2"> Adds tack to your board
-        <input type="hidden" name="onoffswitch2" value="off">
-    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch2" class="onoffswitch-checkbox" id="myonoffswitch2" {% if  subsc.addtack  == "on" %} checked {% endif %}>
-        <label class="onoffswitch-label" for="myonoffswitch2">
-            <div class="onoffswitch-inner"></div>
-            <div class="onoffswitch-switch"></div>
-        </label>
-    </div>
-        </label>
-    <label for="myonoffswitch3"> marks your tack as favourite
-    <div class="onoffswitch">
-        <input type="hidden" name="onoffswitch3" value="off">
-        <input type="checkbox" name="onoffswitch3" class="onoffswitch-checkbox" id="myonoffswitch3" {% if  subsc.favorite  == "on" %} checked {% endif %}>
-        <label class="onoffswitch-label" for="myonoffswitch3">
-            <div class="onoffswitch-inner"></div>
-            <div class="onoffswitch-switch"></div>
-        </label>
-    </div>
-        </label>
-    <p class="signin button">
-		<input type="submit" value="Save"/>
-        <a href="/">
-        <input type="button" value="Cancel"/></a>
-		</p>
-{% endfor %}
-    </form>
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div id="createboard" class="ui form segment" >
+                    <form action="/savesubscriptions" method="post">
+                        {% for subsc in subscriptions %}
+                            <div class="ui large label">Subscribe to email notifications when someone:</div><br><br>
+                            <div class="ui large label" for="myonoffswitch1"> Follows you
+                                <div class="onoffswitch">
+                                    <input type="hidden" name="onoffswitch1" value="off">
+                                    <input type="checkbox" name="onoffswitch1" class="onoffswitch-checkbox" id="myonoffswitch1" {% if  subsc.follow == "on" %} checked {% endif %} >
+                                    <label class="onoffswitch-label" for="myonoffswitch1">
+                                        <div class="onoffswitch-inner"></div>
+                                        <div class="onoffswitch-switch"></div>
+                                    </label>
+                                </div>
+                            </div><br><br>
+                            <div class="ui large label" for="myonoffswitch2"> Adds tack to your board
+                                <input type="hidden" name="onoffswitch2" value="off">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch2" class="onoffswitch-checkbox" id="myonoffswitch2" {% if  subsc.addtack  == "on" %} checked {% endif %}>
+                                    <label class="onoffswitch-label" for="myonoffswitch2">
+                                        <div class="onoffswitch-inner"></div>
+                                        <div class="onoffswitch-switch"></div>
+                                    </label>
+                                </div>
+                            </div><br><br>
+                            <div class="ui large label" for="myonoffswitch3"> Marks your tack as Favorite
+                                <div class="onoffswitch">
+                                    <input type="hidden" name="onoffswitch3" value="off">
+                                    <input type="checkbox" name="onoffswitch3" class="onoffswitch-checkbox" id="myonoffswitch3" {% if  subsc.favorite  == "on" %} checked {% endif %}>
+                                    <label class="onoffswitch-label" for="myonoffswitch3">
+                                        <div class="onoffswitch-inner"></div>
+                                        <div class="onoffswitch-switch"></div>
+                                    </label>
+                                </div>
+                            </div>
 
+                            <input class="ui button blue" type="submit" value="Save"/>
+                            <a href="/">
+                                <input class="ui button blue" type="button" value="Cancel"/></a>
+
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 </body>
 </html>

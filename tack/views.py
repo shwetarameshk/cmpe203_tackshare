@@ -24,10 +24,12 @@ import connect
 
 def home(request):
     if request.user.is_authenticated():
-        tackimages = TackImages.objects.filter(username= get_user(request))
-        privateBoards = Boards.objects.order_by('Name').filter(username=get_user(request),Privacy="Private")[:10]
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
+        yourBoards = Boards.objects.order_by('Name').filter(username=get_user(request))[:10]
+        otherBoards = Boards.objects.order_by('Name').filter(~Q(username = get_user(request)))[:10]
+        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,'otherBoards':otherBoards})
+        # privateBoards = Boards.objects.order_by('Name').filter(username=get_user(request),Privacy="Private")[:10]
+        # publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
+        # return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
     else:
         return render_to_response('Home.html')
 
@@ -39,6 +41,7 @@ def logout_user(request):
 @login_required
 def update_user(request):
     return render_to_response('updateprofile.html', {'firstname':User.get_full_name(request.user),'username':User.get_username(request.user)})
+
 @login_required
 @csrf_exempt
 def update_user_profile(request):
@@ -46,10 +49,7 @@ def update_user_profile(request):
         u = User.objects.get(username__exact=str(get_user(request)))
         u.set_password(request.POST["password"])
         u.save()
-        tackimages = TackImages.objects.filter(username= get_user(request))
-        privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
+        return redirect("/")
     else:
         return render_to_response('updateprofile.html', {'firstname':User.get_full_name(request.user),'username':User.get_username(request.user),'status':"password didn't match"})
 
@@ -58,10 +58,7 @@ def login_user(request):
     user = authenticate(username=request.POST["username"], password=request.POST["password"])
     if user is not None:
         login(request, user)
-        tackimages = TackImages.objects.filter(username= get_user(request))
-        privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
+        return redirect("/")
     else:
         return render_to_response("Home.html", {'status': "Invalid Username or password"})
 
@@ -80,45 +77,30 @@ def register(request):
         send_mail("registered","Dude!! Welcome to the Fun World. Login to your account http://www.tackshare.com","tackshare@gmail.com",[request.POST["email"]],fail_silently="false")
         return render_to_response("Home.html", {'status': request.POST["username"]+"!! Registered Successfully! Please Login"})
     else:
-        return render_to_response("Home.html", {'status': 'your passwords didn\'t match'})
+        return render_to_response("Home.html", {'status': 'Your passwords didn\'t match'})
 
 @login_required
 @csrf_exempt
 def createTack(request):
     boards = Boards.objects.filter(username=get_user(request))
     return render_to_response("CreateTack.html",{'user': str(get_user(request)),'boards':boards})
+
 @login_required
 @csrf_exempt
 def createTackUrl(request):
     boards = Boards.objects.filter(username=get_user(request))
     return render_to_response("CreatetackFromUrl.html",{'user': str(get_user(request)),'boards':boards})
+
 @login_required
 @csrf_exempt
 def update_dashboard(request):
-    print "username"+str(get_user(request))
-    if 'tack_name' in request.POST:
-        TackImages(Filename=request.POST["tack_name"],
-                   image=request.FILES["file"],
-                   tags=request.POST["tags"],
-                   username=get_user(request),
-                   bookmark=request.POST["tack_url"],
-                   board=request.POST["board"]
-                   ).save()
-        tackimages = TackImages.objects.filter(username= get_user(request))
-        privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
-    else:
-        if 'board_name' in request.POST:
-            Boards(Name=request.POST["board_name"],
-                   Description=request.POST["board_desc"],
-                   Privacy=request.POST["board_privacy"],
-                   username=get_user(request),
-                   ).save()
-    privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-    publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-    #return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'privateBoards':privateBoards,'publicBoards':publicBoards})
+    Boards(Name=request.POST["board_name"],
+           Description=request.POST["board_desc"],
+           Privacy=request.POST["board_privacy"],
+           username=get_user(request),
+           ).save()
     return redirect("/")
+
 @login_required
 @csrf_exempt
 def saveTack(request):
@@ -137,10 +119,8 @@ def saveTack(request):
     tack_name = request.POST["tack_name"]
     board.Tacks.append(tack_name)
     board.save()
-    privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-    publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-    tackimages = TackImages.objects.filter(username= get_user(request))
-    return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'privateBoards':privateBoards,'publicBoards':publicBoards,'tacks':tackimages})
+    return redirect("/")
+
 @login_required
 @csrf_exempt
 def UrlsaveTack(request):
@@ -171,10 +151,7 @@ def UrlsaveTack(request):
     tack_name = request.POST["tack_name"]
     board.Tacks.append(tack_name)
     board.save()
-    privateBoards = Boards.objects.order_by('Name').filter(username= get_user(request),Privacy="Private")[:10]
-    publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-    tackimages = TackImages.objects.filter(username= get_user(request))
-    return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'privateBoards':privateBoards,'publicBoards':publicBoards,'tacks':tackimages})
+    return redirect("/")
 
 @login_required
 @csrf_exempt
@@ -191,19 +168,12 @@ def saveBoard(request):
     except:
         response_data['result']="failure"
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-@login_required
-def createNewBoard(request):
-    tack=TackImages(Filename=request.POST["tack_name"],
-               image=request.FILES["file"],
-               tags=request.POST["tags"],
-               username=get_user(request),
-               bookmark=request.POST["tack_url"]
-               )
-    return render_to_response("CreateNewBoard.html",{'user': str(get_user(request)),'tack':tack})
+
 
 @login_required
 def createBoard(request):
     return render_to_response("CreateBoard.html",{'user': str(get_user(request))})
+
 @login_required
 def showTacks(request):
     """
@@ -215,16 +185,19 @@ def showTacks(request):
     tackNames = board[0].Tacks
     tacks = TackImages.objects.filter(Filename__in=tackNames)
     return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
+
 @login_required
 def displayTack(request):
     tackName = request.GET.get('tackName')
     tacks = TackImages.objects.filter(Filename=tackName)
     tack = tacks[0]
     return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack})
+
 @login_required
 def shareBoard(request):
     boardName = request.GET.get('boardName')
     return render_to_response("ShareBoard.html",{'boardName':boardName})
+
 @login_required
 def manageemail(request):
     subsc = subscription.objects.filter(username=get_user(request))
