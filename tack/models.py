@@ -35,3 +35,8 @@ class Boards(models.Model):
     def __unicode__(self):
         return self.Name
 
+class subscription(models.Model):
+    username=models.TextField()
+    follow = models.TextField()
+    addtack = models.TextField()
+    favorite = models.TextField()

@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tack',
+    'django_facebook',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -47,7 +48,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER='tackshare@gmail.com'
+EMAIL_HOST_PASSWORD='rockerz123'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
 ROOT_URLCONF = 'tackshare.urls'
 
 WSGI_APPLICATION = 'tackshare.wsgi.application'
@@ -57,6 +64,8 @@ TEMPLATE_DIRS = 'tack/Templates'
 STATIC_ROOT = 'tack/static/'
 MEDIA_ROOT = 'tack/media/'
 MEDIA_URL = 'media/'
+FACEBOOK_APP_ID = '285287374980377'
+FACEBOOK_APP_SECRET = '2f569363c04d6e655424d5bd8883ffd8'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
