@@ -24,9 +24,15 @@ import connect
 
 def home(request):
     if request.user.is_authenticated():
-        yourBoards = Boards.objects.order_by('Name').filter(username=get_user(request))[:10]
-        otherBoards = Boards.objects.order_by('Name').filter(~Q(username = get_user(request)))[:10]
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,'otherBoards':otherBoards})
+        whoami = get_user(request)
+        yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
+        otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
+        visibleBoards = []
+        for board in otherBoards:
+            visibleTo = board.VisibleToUsers
+            if str(whoami) in visibleTo:
+                visibleBoards.append(board)
+        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,'otherBoards':visibleBoards})
         # privateBoards = Boards.objects.order_by('Name').filter(username=get_user(request),Privacy="Private")[:10]
         # publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
         # return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
@@ -115,7 +121,7 @@ def saveTack(request):
                bookmark=request.POST["tack_url"],
                board=boardName
                ).save()
-    board = Boards.objects.get(Name=boardName,username=get_user(request))
+    board = Boards.objects.get(Name=boardName)
     tack_name = request.POST["tack_name"]
     board.Tacks.append(tack_name)
     board.save()
@@ -199,6 +205,18 @@ def displayTack(request):
 def shareBoard(request):
     boardName = request.GET.get('boardName')
     return render_to_response("ShareBoard.html",{'boardName':boardName})
+
+@login_required
+@csrf_exempt
+def shareWithUser(request):
+    shareWith = request.POST['share_user']
+    boardName = request.POST['boardName']
+    board = Boards.objects.get(Name=boardName)
+    board.VisibleToUsers.append(shareWith)
+    board.save()
+    tackNames = board.Tacks
+    tacks = TackImages.objects.filter(Filename__in=tackNames)
+    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
 
 @login_required
 def manageemail(request):

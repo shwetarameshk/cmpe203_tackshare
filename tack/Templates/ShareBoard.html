@@ -35,5 +35,25 @@
         </div>
     </div>
 </div>
+    <div class="container">
+        <section>
+            <div id="container_demo">
+                <div id="wrapper">
+                    <div id="shareBoard" class="ui form segment" >
+                        <form action="/shareWithUser" method="post" enctype="multipart/form-data">
+                        <div class="field">
+                            <label for="share_user">Share With:</label>
+                            <div class="input">
+                                <input type="text" name="share_user" placeholder="Enter user name">
+                                <input type="hidden" name="boardName" value="{{ boardName }}">
+                            </div>
+                        </div>
+                        <input class="ui button blue" type="submit" name="share" value="Share!">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </body>
 </html>
