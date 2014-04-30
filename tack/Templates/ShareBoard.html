@@ -5,6 +5,11 @@
     <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
 </head>
 <body>
 <div class="ui inverted tiered menu">
@@ -35,25 +40,36 @@
         </div>
     </div>
 </div>
-    <div class="container">
-        <section>
-            <div id="container_demo">
-                <div id="wrapper">
-                    <div id="shareBoard" class="ui form segment" >
-                        <form action="/shareWithUser" method="post" enctype="multipart/form-data">
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div id="shareBoard" class="ui form segment" >
+                    <form action="/shareWithUser" method="post" enctype="multipart/form-data">
                         <div class="field">
-                            <label for="share_user">Share With:</label>
+                            <h3 class="ui header">Share {{ boardName }} With:</h3>
                             <div class="input">
                                 <input type="text" name="share_user" placeholder="Enter user name">
                                 <input type="hidden" name="boardName" value="{{ boardName }}">
                             </div>
                         </div>
                         <input class="ui button blue" type="submit" name="share" value="Share!">
-                        </form>
-                    </div>
+                    </form>
                 </div>
+
+                <div class="ui large label">{% if  sharedWith == "none" %}The board is not shared with anyone
+                {% else %} Currently shared with: </div><br>
+                    {% for userName in sharedWith %}
+                        <div class="ui label">{{ userName }}
+                        <a style="text-decoration: none" class="item"
+                           href="/unShareBoard?userName={{ userName }}&boardName={{ boardName }}">
+                            <i class="remove sign icon"></i>
+                        </a>
+                        </div><br>
+                    {% endfor %}{% endif %}
+             </div>
             </div>
-        </section>
-    </div>
+    </section>
+</div>
 </body>
 </html>

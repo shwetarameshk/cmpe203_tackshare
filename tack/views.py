@@ -204,7 +204,23 @@ def displayTack(request):
 @login_required
 def shareBoard(request):
     boardName = request.GET.get('boardName')
-    return render_to_response("ShareBoard.html",{'boardName':boardName})
+    board = Boards.objects.get(Name=boardName)
+    if not board.VisibleToUsers:
+        sharedWith="none"
+    else:
+        sharedWith = board.VisibleToUsers
+    return render_to_response("ShareBoard.html",{'boardName':boardName,'sharedWith':sharedWith})
+
+@login_required
+@csrf_exempt
+def unShareBoard(request):
+    boardName = request.GET.get('boardName')
+    userName = request.GET.get('userName')
+    board = Boards.objects.get(Name=boardName)
+    board.VisibleToUsers.remove(userName)
+    board.save()
+    sharedWith = board.VisibleToUsers
+    return render_to_response("ShareBoard.html",{'boardName':boardName,'sharedWith':sharedWith})
 
 @login_required
 @csrf_exempt
