@@ -61,9 +61,12 @@
 </div>
 <section class="container">
     <div id="wrapper">
-
-    <div class="ui label">{% if  tacks == "" %}There are no tacks in this board!{% endif %}</div>
+    {% if  tacks == "" %}
+        <div class="ui label">There are no tacks in this board!{% endif %}</div>
+    <div class="ui blue label">{{ boardName }}</div>
+    
     <div class = "ui five column grid">
+
 
         {% for tack in tacks %}
             <div class="column">
