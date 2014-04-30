@@ -293,3 +293,26 @@ def FollowUser(request):
     userName=request.GET.get('userName')
     print userName
     return render_to_response("FollowUser.html",{'userName':userName})
+
+@csrf_exempt
+def AutoBoardComplete(request):
+    if request.is_ajax():
+        searchString=request.POST["search"]
+        search_qs = Boards.objects.filter(Name__startswith=searchString).filter(Privacy="Public")
+        print search_qs
+        results = []
+        for r in search_qs:
+            results.append(r.Name)
+        print results
+        return HttpResponse(json.dumps(results), content_type="application/json", status=200)
+
+@csrf_exempt
+def searchBoards(request):
+    searchString=request.POST["search"]
+    print searchString
+    board = Boards.objects.get(Name=searchString)
+    tackNames = board.Tacks
+    tacks = TackImages.objects.filter(Filename__in=tackNames)
+    if not tacks:
+        tacks = ""
+    return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})

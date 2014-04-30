@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ boardName }}</title>
+    <meta charset="UTF-8" />
+
+
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
+    <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
+    <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
+    <script type="text/javascript">
+        Shadowbox.init();
+    </script>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="ui inverted tiered menu">
+    <div class="right menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="edit icon"></i> Edit Board
+            </a>
+        </div>
+        <div class="item">
+            <a class="item" href="/shareBoard?boardName={{ boardName }}">
+                <i class="share icon"></i> Share Board
+            </a>
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+                <a class="item" href="/newurltack">Create Tack from Url</a>
+
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
+                <a class="item" href="/logout">Logout</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+<section class="container">
+    <div id="wrapper">
+
+    <div class="ui label">{% if  tacks == "" %}There are no tacks in this board!{% endif %}</div>
+    <div class = "ui five column grid">
+
+        {% for tack in tacks %}
+            <div class="column">
+                <div class="ui segment">
+                    <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
+                        <img src="{{ MEDIA_URL }}{{ tack.image }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+</section>
+</body>
+</html>
