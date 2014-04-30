@@ -5,6 +5,34 @@
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+
+    <script>
+        function searchOpen() {
+    var search = $('#txtSearch').val()
+    var data = {
+        search: search
+    };
+    $.ajax({
+        url: '/autoComplete',
+        data: data,
+        type: "POST",
+        success: function(data) {
+            var returned_html = $(data);
+            $( "#txtSearch" ).autocomplete ({
+        source: data
+    });
+        }
+    });
+}
+
+        function searchResult(data) {
+        alert("Here");
+    $( "#txtSearch" ).autocomplete ({
+        source: data
+    });
+}
+    </script>
 
     <title>Tackshare</title>
 </head>
@@ -37,6 +65,32 @@
         </div>
     </div>
 </div>
+
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div id="searchUsers" class="ui form segment" >
+                    <form action="/searchUsers" method="post" enctype="multipart/form-data">
+                        <div>
+                            <div class="ui label">Search Users:</div>
+
+                            <input type="text" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
+                            </br>
+                            <input class="ui button blue" type="submit" name="submit" value="Search">
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+ </div>
+
+
 <section class="container">
     <div id="wrapper">
         <div class="ui large blue label">{% if yourBoards == "None" %}You have not created any boards! Create a board and get started!

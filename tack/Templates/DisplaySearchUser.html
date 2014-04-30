@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
+    <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
+    <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
+    <script type="text/javascript">
+        Shadowbox.init();
+    </script>
+
+    <title>Tackshare</title>
+</head>
+<body>
+<div class="ui inverted tiered menu">
+    <div class="right menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+                <a class="item" href="/newurltack">Create Tack from Url</a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
+                <a class="item" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+<a href="/FollowUser?userName={{ userName }}"  rel="shadowbox" class="rounded ui image" style="float: right;">Follow user</a>
+</div>
+
+
+<section>
+    <div id="wrapper">
+        <div class="ui large blue label">Public Boards</div>
+        <div class = "ui five column grid">
+            {% for board in publicBoards %}
+                <div class="column">
+                    <div class="ui segment">
+                        <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
+                            <div class="image">
+                                <img class="rounded ui image" src="/static/images/board4.png"src="/static/images/board2.png" alt='No Image' width="200" height="200">
+                                <h2><span>{{ board.Name }}</span></h2>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+</body>
+</html>

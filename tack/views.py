@@ -264,3 +264,32 @@ def savesubscription(request):
 def createTackInBoard(request):
     return render_to_response("CreateTackInBoard.html",{'user': str(get_user(request)),'boardName':request.GET.get('boardName')})
 
+@csrf_exempt
+def searchUsers(request):
+    searchString=request.POST["search"]
+    print searchString
+    userResults=User.objects.filter(username=searchString)
+    if(len(userResults)>0):
+        userName=User.get_username(userResults[0])
+        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
+        return render_to_response("DisplaySearchUser.html",{'userResult':userResults,'publicBoards':publicBoards,'userName':userName})
+
+@csrf_exempt
+def autocompleteModel(request):
+   # search_qs = User.objects.filter(username__startswith=request.REQUEST['search'])
+    if request.is_ajax():
+        searchString=request.POST["search"]
+        search_qs = User.objects.filter(username__startswith=searchString)
+        print search_qs
+        results = []
+        for r in search_qs:
+            results.append(r.username)
+        print results
+        return HttpResponse(json.dumps(results), content_type="application/json", status=200)
+
+
+@csrf_exempt
+def FollowUser(request):
+    userName=request.GET.get('userName')
+    print userName
+    return render_to_response("FollowUser.html",{'userName':userName})
