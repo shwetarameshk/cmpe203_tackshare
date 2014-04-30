@@ -61,26 +61,35 @@
 </div>
 <section class="container">
     <div id="wrapper">
-        <div class = "ui five column grid">
-            <div class="column">
-                    <div class="ui segment">
-                        <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" >
-                            <div class="image">
-                                <i class="massive black add sign icon"></i>
-                            </div>
-                        </a>
+        <div class="ui label">{% if  sharedWith == "none" %}The board is not shared with anyone
+        {% else %} This board is currently shared with: <br>
+            {% for userName in sharedWith %}
+                <div class="ui label">{{ userName }}
+                </div></div><br>
+            {% endfor %}{% endif %}
+    </div><br>
+    <div class="ui label">{% if  tacks == "" %}There are no tacks in this board! Add a tack! {% endif %}</div>
+    <div class = "ui five column grid">
+        <div class="column">
+            <div class="ui segment">
+                <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" style="text-decoration: none" >
+                    <div class="image">
+                        <i class="massive black add sign icon"></i>
+                        <div class="ui label">Create New Tack!</div>
                     </div>
+                </a>
             </div>
-            {% for tack in tacks %}
-                <div class="column">
-                    <div class="ui segment">
-                        <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
-                            <img src="{{ MEDIA_URL }}{{ tack.image }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}>
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
         </div>
+        {% for tack in tacks %}
+            <div class="column">
+                <div class="ui segment">
+                    <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
+                        <img src="{{ MEDIA_URL }}{{ tack.image }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
     </div>
 </section>
 </body>

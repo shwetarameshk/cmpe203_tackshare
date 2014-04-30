@@ -26,12 +26,16 @@ def home(request):
     if request.user.is_authenticated():
         whoami = get_user(request)
         yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
+        if not yourBoards:
+            yourBoards = "None"
         otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
         visibleBoards = []
         for board in otherBoards:
             visibleTo = board.VisibleToUsers
             if str(whoami) in visibleTo:
                 visibleBoards.append(board)
+        if not visibleBoards:
+            visibleBoards = "None"
         return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,'otherBoards':visibleBoards})
         # privateBoards = Boards.objects.order_by('Name').filter(username=get_user(request),Privacy="Private")[:10]
         # publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
@@ -188,11 +192,17 @@ def showTacks(request):
     Show tacks for a board
     """
     boardName = request.GET.get('boardName')
-    board = Boards.objects.filter(Name=boardName)
+    board = Boards.objects.get(Name=boardName)
     #board name must be unique
-    tackNames = board[0].Tacks
+    tackNames = board.Tacks
+    if not board.VisibleToUsers:
+        sharedWith="none"
+    else:
+        sharedWith = board.VisibleToUsers
     tacks = TackImages.objects.filter(Filename__in=tackNames)
-    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
+    if not tacks:
+        tacks = ""
+    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName,'sharedWith':sharedWith})
 
 @login_required
 def displayTack(request):

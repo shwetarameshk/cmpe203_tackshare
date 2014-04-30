@@ -39,13 +39,15 @@
 </div>
 <section class="container">
     <div id="wrapper">
-        <div class="ui large blue label">Boards you created:</div>
+        <div class="ui large blue label">{% if yourBoards == "None" %}You have not created any boards! Create a board and get started!
+            {% else %}Boards you created:</div>
         <div class = "ui five column grid">
             <div class="column">
                     <div class="ui segment">
-                        <a id="board_ref" href="/createboard">
+                        <a id="board_ref" href="/createboard" style="text-decoration: none">
                             <div class="image">
-                                <i class="massive black add sign icon"></i>
+                                <i class="massive black add sign icon"></i><br>
+                                <div class="ui label">Create New Board!</div>
                             </div>
                         </a>
                     </div>
@@ -61,14 +63,15 @@
                         </a>
                     </div>
                 </div>
-            {% endfor %}
+            {% endfor %}{% endif %}
         </div>
     </div>
 </section>
 <hr>
 <section>
     <div id="wrapper">
-        <div class="ui large blue label">Boards you follow:</div>
+        <div class="ui large blue label">{% if otherBoards == "None" %}Follow a user to view more boards of your interest!
+            {% else %}Boards you follow:</div>
         <div class = "ui five column grid">
             {% for board in otherBoards %}
                 <div class="column">
@@ -81,7 +84,7 @@
                         </a>
                     </div>
                 </div>
-            {% endfor %}
+            {% endfor %}{% endif %}
         </div>
     </div>
 </section>
