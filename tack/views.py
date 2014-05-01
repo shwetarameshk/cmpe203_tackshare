@@ -209,7 +209,13 @@ def displayTack(request):
     tackName = request.GET.get('tackName')
     tacks = TackImages.objects.filter(Filename=tackName)
     tack = tacks[0]
-    return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack})
+
+    #boards and tags Added by Sindhu. boards are needed for the Edit tack.
+    # Also, transform the tags before sending it to Edit Tack.
+    boards = Boards.objects.filter(username=get_user(request))
+    tags = ''.join(tack.tags)
+    return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
+
 
 @login_required
 def shareBoard(request):
@@ -316,3 +322,45 @@ def searchBoards(request):
     if not tacks:
         tacks = ""
     return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})
+
+
+@csrf_exempt
+@login_required
+def editTack(request):
+    tackName = request.POST.get('tackName')
+    img_url = request.POST["tack_url"]
+    file_input = request.FILES.get('file')
+    board_input = request.POST.get('ex_board')
+
+#    print >>sys.stderr, str(tackName)
+
+
+    tacks = TackImages.objects.filter(Filename=tackName)
+    tack = tacks[0]
+    tagsString = request.POST.get('tags')
+    if(not tagsString):
+        tagsString = ''
+    tack.tags = tagsString.split()
+
+    tack.board = board_input
+
+
+    #Check if file input is given, then use it. Otherwise, check the url. If both are provided, file input gets precedence.
+    if (file_input):
+        tack.image = file_input
+    elif img_url:
+        r = requests.get(img_url)
+        img_temp = NamedTemporaryFile(delete=True)
+        img_temp.write(r.content)
+        img_temp.flush()
+        parsed_uri=urlparse(img_url)
+        domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+        print domain
+        tack.image = File(img_temp)
+        tack.bookmark = domain
+
+
+    tack.save()
+    return redirect("/displayTack?tackName=" + tack.Filename)
+
+
