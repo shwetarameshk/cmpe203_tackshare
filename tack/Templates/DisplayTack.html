@@ -214,7 +214,6 @@
         <div class="input">
             <input type="text" name="tags" placeholder="Tags Separated by commas" value="{{ tags }}"></br>
         </div>
-
     </div>
     <div class="field">
         <label>Board: {{ tack.board }} </label>
@@ -233,6 +232,79 @@
     <input class="ui button blue" type="submit" id="submitTack" value="Save!">
     <a href="#" id="close">Close</a>
 </form>
+
+                <form class="ui form segment"
+                      name="confirm_fav_form"
+                      id="confirm_fav_form"
+                      method="post" style="display:none"
+                      action="/ConfirmFav?tackName={{ tack.Filename }}&boardName={{ board.Name }}"
+                      enctype="multipart/form-data" >
+                      <div>
+                      <label> Mark Tack '{{ tack.Filename }}' as Favourite? </label>
+                      </div>
+
+                      <div>
+                      <input class="ui button blue" type="submit" id="saveAsFav" value="Confirm">
+
+                      <a href="#" id="closePopUp">Close</a>
+                      </div>
+
+                </form>
+
+
+
+                <form class="ui form segment"
+                      name="tackform"
+                      id="tackform"
+                      method="post" style="display:none"
+                      action="/editTack"
+                      enctype="multipart/form-data" >
+
+                                    <div class="field">
+                                        <label for="tack_name">Upload new file:</label>
+                                        <div class="ui top center attached blue label">{{ tack.Filename }}</div>
+                                    </div>
+
+                                    <input type="hidden" name="tackName" value="{{ tack.Filename }}">
+
+                                    <div class="field">
+                                        <label for="file">Image:</label>
+                                        <div class="input">
+                                            <input type="file" name="file" id="file" accept="image/*"><br>
+                                        </div>
+                                    </div>
+
+                                        <div class="field">
+                                            <label for="tack_url">URL:</label>
+                                            <div class="input">
+                                                <input type="url" name="tack_url" placeholder="URL to tack" value="{{ tack.bookmark }}"/>
+                                                </br>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="tags">Tags:</label>
+                                            <div class="input">
+                                                <input type="text" name="tags" placeholder="Tags Separated by commas" value="{{ tags }}"></br>
+                                            </div>
+
+                                        </div>
+                                            <div class="field">
+                                                <label>Board: {{ tack.board }} </label>
+                                                <select name="ex_board">
+                                                     {% for board in boards %}
+                                                             <option name =""
+                                                                     value="{{ board.Name }}"
+
+                                                                     {% if tack.board == board.Name %} selected="selected" {% endif %}>
+                                                              {{ board.Name }}
+                                                             </option>
+                                                     {% endfor %}
+                                                </select>
+                                        </div>
+
+                                    <input class="ui button blue" type="submit" id="submitTack" value="Save!">
+                                    <a href="#" id="close">Close</a>
+                        </form>
 
 <!-- End of editing a tack -->
 

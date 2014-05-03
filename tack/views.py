@@ -131,6 +131,7 @@ def saveTack(request):
                username=get_user(request),
                bookmark=request.POST["tack_url"],
                board=boardName
+
                ).save()
     board = Boards.objects.get(Name=boardName)
     tack_name = request.POST["tack_name"]
@@ -323,12 +324,16 @@ def AutoBoardComplete(request):
 def searchBoards(request):
     searchString=request.POST["search"]
     print searchString
-    board = Boards.objects.get(Name=searchString)
-    tackNames = board.Tacks
-    tacks = TackImages.objects.filter(Filename__in=tackNames)
-    if not tacks:
-        tacks = ""
-    return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})
+    board = Boards.objects.filter(Name=searchString).filter(Privacy="Public")
+    if not board:
+        searchString=""
+        return render_to_response("PrivateBoardAccess.html")
+    else:
+        tackNames = board.Tacks
+        tacks = TackImages.objects.filter(Filename__in=tackNames)
+        if not tacks:
+            tacks = ""
+        return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})
 
 @csrf_exempt
 def confirmFav(request):
@@ -341,6 +346,7 @@ def confirmFav(request):
     tack.isFavorite=True
     tack.save()
     print "Marked Favourite"
+    print tack.fileType
     boards = Boards.objects.filter(username=get_user(request))
     tags = ''.join(tack.tags)
     return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
@@ -420,3 +426,10 @@ def changeBoardPrivacy(request):
 
 def sidebarTest(request):
     return render_to_response("SidebarTest.html")
+
+@csrf_exempt
+def viewFavorites(request):
+    tacks=TackImages.objects.filter(isFavorite=True)
+    if not tacks:
+        tacks=""
+    return render_to_response("FavoritesHome.html",{'tacks':tacks})
