@@ -118,8 +118,10 @@ def saveTack(request):
         boardName = request.POST["new_board"]
     else:
         boardName = request.POST["ex_board"]
+    a = request.POST["file"]
     TackImages(Filename=request.POST["tack_name"],
                image=request.FILES["file"],
+               tackFile = request.FILES["file"],
                tags=request.POST["tags"],
                username=get_user(request),
                bookmark=request.POST["tack_url"],
@@ -131,7 +133,7 @@ def saveTack(request):
     board.save()
     tackNames = board.Tacks
     tacks = TackImages.objects.filter(Filename__in=tackNames)
-    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
+    return redirect("/board?boardName="+boardName)
 
 @login_required
 @csrf_exempt
@@ -241,14 +243,14 @@ def unShareBoard(request):
 @login_required
 @csrf_exempt
 def shareWithUser(request):
-    shareWith = request.POST['share_user']
+    shareWith = request.POST['search']
     boardName = request.POST['boardName']
     board = Boards.objects.get(Name=boardName)
     board.VisibleToUsers.append(shareWith)
     board.save()
     tackNames = board.Tacks
     tacks = TackImages.objects.filter(Filename__in=tackNames)
-    return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName})
+    return redirect("/board?boardName="+boardName)
 
 @login_required
 def manageemail(request):
@@ -364,3 +366,29 @@ def editTack(request):
     return redirect("/displayTack?tackName=" + tack.Filename)
 
 
+@login_required
+@csrf_exempt
+def videoTest(request):
+    return render_to_response("VideoTest.html",{'MEDIA_URL': settings.MEDIA_URL})
+
+@login_required
+@csrf_exempt
+def displayVideo (request):
+    return render_to_response("VideoTest2.html",{'MEDIA_URL': settings.MEDIA_URL})
+
+@login_required
+@csrf_exempt
+def editBoardPrivacy(request):
+    boardName = request.GET.get('boardName')
+    board = Boards.objects.get(Name=boardName)
+    return render_to_response("EditBoardPrivacy.html",{'board':board})
+
+@login_required
+@csrf_exempt
+def changeBoardPrivacy(request):
+    boardName = request.POST['boardName']
+    boardPrivacy = request.POST["board_privacy"]
+    board = Boards.objects.get(Name=boardName)
+    board.Privacy = boardPrivacy
+    board.save()
+    return redirect("/board?boardName="+boardName)

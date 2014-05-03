@@ -32,6 +32,8 @@ urlpatterns = patterns('',
     url(r'^shareBoard', views.shareBoard,name='shareBoard'),
     url(r'^shareWithUser',views.shareWithUser,name='shareWithUser'),
     url(r'^unShareBoard',views.unShareBoard,name='unShareBoard'),
+    url(r'^editBoardPrivacy',views.editBoardPrivacy,name='editBoardPrivacy'),
+    url(r'^changeBoardPrivacy',views.changeBoardPrivacy,name='changeBoardPrivacy'),
     url(r'^board',views.showTacks,name='showTacks'),
     url(r'^displayTack',views.displayTack,name='displayTacks'),
     url(r'^createTackInBoard',views.createTackInBoard,name='createTackInBoard'),
@@ -39,5 +41,7 @@ urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,
         }),
-    url(r'^editTack',views.editTack,name='editTack')
+    url(r'^editTack',views.editTack,name='editTack'),
+    url(r'^videoTest',views.videoTest,name='videoTest'),
+    url(r'^displayVideoTack',views.displayVideo,name='displayVideo')
 )
