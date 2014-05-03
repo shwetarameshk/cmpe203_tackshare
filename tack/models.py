@@ -20,6 +20,7 @@ class TackImages(models.Model):
     bookmark = models.URLField()
     username = models.TextField()
     board = models.TextField()
+    isFavorite=models.BooleanField()
 
     def __unicode__(self):
         return self.Filename

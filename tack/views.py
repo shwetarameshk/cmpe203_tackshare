@@ -325,6 +325,21 @@ def searchBoards(request):
         tacks = ""
     return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})
 
+@csrf_exempt
+def confirmFav(request):
+    tackName=request.GET.get("tackName")
+    boardName=request.GET.get("boardName")
+    print tackName
+    print boardName
+    tacks = TackImages.objects.filter(Filename=tackName)
+    tack = tacks[0]
+    tack.isFavorite=True
+    tack.save()
+    print "Marked Favourite"
+    boards = Boards.objects.filter(username=get_user(request))
+    tags = ''.join(tack.tags)
+    return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
+
 
 @csrf_exempt
 @login_required
