@@ -14,13 +14,13 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <script>
-    $(document).ready(function(){
-    $("a").click(function(){
-    alert("The icon was clicked.");
-    });
-    });
+        $(document).ready(function(){
+            $("a").click(function(){
+                alert("The icon was clicked.");
+            });
+        });
 
-   </script>
+    </script>
 </head>
 <body>
 <div class="container">
@@ -28,26 +28,35 @@
         <div id="container_demo">
             <div id="wrapper">
                 <div class="ui left floated medium image">
-                {% if tack.isFavorite %}
-                    <a class="ui right blue corner label item" style="text-decoration:none;" href="#" id="confirm_fav">
-                    <i class="star icon"></i>
-                    </a>
-                    <img class="ui large image" src="{{ MEDIA_URL }}{{ tack.image }}"  alt='No Image' title={{ tack.Filename }}>
-                {% else %}
-                     <a class="ui right red corner label item" style="text-decoration:none;" href="#" id="confirm_fav">
-                    <i class="star icon"></i>
-                    </a>
-                    <img class="ui large image" src="{{ MEDIA_URL }}{{ tack.image }}"  alt='No Image' title={{ tack.Filename }}>
-                {% endif %}
+                    {% if tack.isFavorite %}
+                        <a class="ui right blue corner label item" style="text-decoration:none;" href="#" id="confirm_fav">
+                            <i class="star icon"></i>
+                        </a>
+                        <img class="ui large image" src="{{ MEDIA_URL }}{{ tack.tackFile }}"  alt='No Image' title={{ tack.Filename }}>
+                    {% else %}
+                        <a class="ui right red corner label item" style="text-decoration:none;" href="#" id="confirm_fav">
+                            <i class="star icon"></i>
+                        </a>
+                        {% if tack.fileType == "image" %}
+                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                        {% else %}
+                            <video width="200" height="200" controls>
+                                <source src="{{ MEDIA_URL }}small_webm.webm" type="video/webm">
+                                <source src="{{ MEDIA_URL }}small_ogg.ogg" type="video/ogg">
+                                <source src="{{ MEDIA_URL }}small_m.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    {% endif %}
 
                 </div>
                 <div class="ui top left attached blue label">{{ tack.Filename }}</div>
 
                 <div class="item">
-                <i class="url icon"></i><a href="{{ tack.bookmark }}" style="text-decoration: none" target="_blank" class="detail">{{ tack.bookmark }}</a>
-            </div>
+                    <i class="url icon"></i><a href="{{ tack.bookmark }}" style="text-decoration: none" target="_blank" class="detail">{{ tack.bookmark }}</a>
+                </div>
                 <div class="item">
-                     <i class="tags icon"></i>Tagged as: {{ tack.tags }}
+                    <i class="tags icon"></i>Tagged as: {{ tack.tags }}
                 </div>
                 <div class="item">
                     <a class="item" href="#" id="edit_tack_link">
@@ -62,96 +71,168 @@
 
 <!-- This is the edit form for editing a tack -->
 
-    <style>
-        #tackform{
-            position: absolute;
-            border: 5px solid gray;
-            font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
-            font-weight: 400;
-            font-size: 15px;
-            color: #1d3c41;
-            overflow-y: scroll;
-            border-radius: 5px;
-            padding: 10px;
-            background: white;
-            width: 400px;
-            height: auto;
-        }
+<style>
+    #tackform{
+        position: absolute;
+        border: 5px solid gray;
+        font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+        font-weight: 400;
+        font-size: 15px;
+        color: #1d3c41;
+        overflow-y: scroll;
+        border-radius: 5px;
+        padding: 10px;
+        background: white;
+        width: 400px;
+        height: auto;
+    }
 
-        #confirm_fav_form{
-            position: absolute;
-            border: 5px solid gray;
-            font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
-            font-weight: 400;
-            font-size: 15px;
-            color: #1d3c41;
-            overflow-y: scroll;
-            border-radius: 5px;
-            padding: 10px;
-            background: white;
-            width: 400px;
-            height: auto;
-        }
-
-
-
-    </style>
-
-
-    <script type="text/javascript">
-        $(document).ready(function(){
-            //open popup
-            $("#edit_tack_link").click(function(){
-                $("#tackform").fadeIn(1000);
-                positionPopup();
-            });
-
-            //close popup
-            $("#close").click(function(){
-                $("#tackform").fadeOut(500);
-            });
-
-            $("#confirm_fav").click(function(){
-               $("#confirm_fav_form").fadeIn(1000);
-                favPopUp();
-            });
+    #confirm_fav_form{
+        position: absolute;
+        border: 5px solid gray;
+        font-family: Cambria, Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+        font-weight: 400;
+        font-size: 15px;
+        color: #1d3c41;
+        overflow-y: scroll;
+        border-radius: 5px;
+        padding: 10px;
+        background: white;
+        width: 400px;
+        height: auto;
+    }
 
 
 
-            $("#closePopUp").click(function(){
-                $("#confirm_fav_form").fadeOut(500);
-            });
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        //open popup
+        $("#edit_tack_link").click(function(){
+            $("#tackform").fadeIn(1000);
+            positionPopup();
         });
 
-        //position the popup at the center of the page
-        function positionPopup(){
-            if(!$("#tackform").is(':visible')){
-                return;
-            }
-            $("#tackform").css({
-                left: ($(window).width() - $('#tackform').width()) / 2,
-                top: ($(window).width() - $('#tackform').width()) / 7,
-                position:'absolute'
-            });
+        //close popup
+        $("#close").click(function(){
+            $("#tackform").fadeOut(500);
+        });
+
+        $("#confirm_fav").click(function(){
+            $("#confirm_fav_form").fadeIn(1000);
+            favPopUp();
+        });
+
+
+
+        $("#closePopUp").click(function(){
+            $("#confirm_fav_form").fadeOut(500);
+        });
+    });
+
+    //position the popup at the center of the page
+    function positionPopup(){
+        if(!$("#tackform").is(':visible')){
+            return;
         }
+        $("#tackform").css({
+            left: ($(window).width() - $('#tackform').width()) / 2,
+            top: ($(window).width() - $('#tackform').width()) / 7,
+            position:'absolute'
+        });
+    }
 
-        function favPopUp(){
-            if(!$("#confirm_fav_form").is(':visible')){
-                return;
-            }
-            $("#confirm_fav_form").css({
-                left: ($(window).width() - $('#confirm_fav_form').width()) / 2,
-                top: ($(window).width() - $('#confirm_fav_form').width()) / 7,
-                position:'absolute'
-            });
+    function favPopUp(){
+        if(!$("#confirm_fav_form").is(':visible')){
+            return;
         }
+        $("#confirm_fav_form").css({
+            left: ($(window).width() - $('#confirm_fav_form').width()) / 2,
+            top: ($(window).width() - $('#confirm_fav_form').width()) / 7,
+            position:'absolute'
+        });
+    }
 
-        //maintain the popup at center of the page when browser resized
-        $(window).bind('resize',positionPopup);
+    //maintain the popup at center of the page when browser resized
+    $(window).bind('resize',positionPopup);
 
 
 
-    </script>
+</script>
+<form class="ui form segment"
+      name="confirm_fav_form"
+      id="confirm_fav_form"
+      method="post" style="display:none"
+      action="/ConfirmFav?tackName={{ tack.Filename }}&boardName={{ board.Name }}"
+      enctype="multipart/form-data" >
+    <div>
+        <label> Mark Tack '{{ tack.Filename }}' as Favourite? </label>
+    </div>
+
+    <div>
+        <input class="ui button blue" type="submit" id="saveAsFav" value="Save">
+
+        <a href="#" id="closePopUp">Close</a>
+    </div>
+
+</form>
+
+
+
+<form class="ui form segment"
+      name="tackform"
+      id="tackform"
+      method="post" style="display:none"
+      action="/editTack"
+      enctype="multipart/form-data" >
+
+    <div class="field">
+        <label for="tack_name">Upload new file:</label>
+        <div class="ui top center attached blue label">{{ tack.Filename }}</div>
+    </div>
+
+    <input type="hidden" name="tackName" value="{{ tack.Filename }}">
+
+    <div class="field">
+        <label for="file">Image:</label>
+        <div class="input">
+            <input type="file" name="file" id="file" accept="image/*"><br>
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="tack_url">URL:</label>
+        <div class="input">
+            <input type="url" name="tack_url" placeholder="URL to tack" value="{{ tack.bookmark }}"/>
+            </br>
+        </div>
+    </div>
+    <div class="field">
+        <label for="tags">Tags:</label>
+        <div class="input">
+            <input type="text" name="tags" placeholder="Tags Separated by commas" value="{{ tags }}"></br>
+        </div>
+    </div>
+    <div class="field">
+        <label>Board: {{ tack.board }} </label>
+        <select name="ex_board">
+            {% for board in boards %}
+                <option name =""
+                        value="{{ board.Name }}"
+
+                        {% if tack.board == board.Name %} selected="selected" {% endif %}>
+                    {{ board.Name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <input class="ui button blue" type="submit" id="submitTack" value="Save!">
+    <a href="#" id="close">Close</a>
+</form>
+
                 <form class="ui form segment"
                       name="confirm_fav_form"
                       id="confirm_fav_form"
