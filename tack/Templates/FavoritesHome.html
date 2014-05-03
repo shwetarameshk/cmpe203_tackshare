@@ -37,7 +37,6 @@
                 <a class="item" href="/createtack">Create Tack</a>
                 <a class="item" href="/createboard">Create Board</a>
                 <a class="item" href="/newurltack">Create Tack from Url</a>
-                <a class="item" href="/viewFavorites">View Favorites</a>
             </div>
         </div>
         <div class="ui simple dropdown item">
@@ -51,12 +50,13 @@
         </div>
     </div>
 </div>
+
 <section class="container">
     <div id="wrapper">
     {% if  tacks == "" %}
         <div class="ui label">There are no tacks in this board!{% endif %}</div>
     <div class="ui blue label">{{ boardName }}</div>
-    
+
     <div class = "ui five column grid">
 
 
@@ -65,7 +65,15 @@
                 <div class="ui segment">
                     <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
                         <img src="{{ MEDIA_URL }}{{ tack.image }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}>
-
+                        {% if tack.isFavorite %}
+                            <a class="ui right blue corner label item" style="text-decoration:none;">
+                                <i class="star icon"></i>
+                            </a>
+                        {% else %}
+                            <a class="ui right red corner label item" style="text-decoration:none;">
+                                <i class="star icon"></i>
+                            </a>
+                        {% endif %}
                     </a>
                 </div>
             </div>
@@ -73,5 +81,7 @@
     </div>
     </div>
 </section>
+
+
 </body>
 </html>
