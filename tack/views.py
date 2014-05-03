@@ -392,3 +392,6 @@ def changeBoardPrivacy(request):
     board.Privacy = boardPrivacy
     board.save()
     return redirect("/board?boardName="+boardName)
+
+def sidebarTest(request):
+    return render_to_response("SidebarTest.html")

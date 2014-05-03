@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+
+    <script type="text/javascript">
+    function toggleSB(){
+        $('.demo.sidebar').sidebar('toggle');
+    }
+    </script>
+
+</head>
+<body>
+<div class="ui inverted tiered menu">
+    <div class="left menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+    </div>
+    <div class="right menu">
+    <div class="item">
+        <a class="item" onclick="toggleSB()">
+                <i class="search icon"></i> Search
+            </a>
+    </div>
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+               <a class="item" href="/editBoardPrivacy?boardName={{ boardName }}"><i class="edit icon"></i> Edit Board</a>
+                <a class="item" href="/shareBoard?boardName={{ boardName }}"><i class="share icon"></i> Share Board</a>
+                <a class="item" href="/newurltack">Create Tack from Url</a>
+
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
+                <a class="item" href="/logout">Logout</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui right demo sidebar">
+               <div id="searchUsers" class="ui form segment" >
+                    <form action="/searchUsers" method="post" enctype="multipart/form-data">
+                        <div style="display:inline;">
+                            <div class="ui label">Search Users:</div>
+
+                            <input type="text" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
+                            </br>
+                            <input class="ui button blue" type="submit" name="submit" value="Search">
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+                <div id="searchBoards" class="ui form segment" >
+                    <form action="/searchBoards" method="post" enctype="multipart/form-data">
+                        <div style="display:inline;">
+                            <div class="ui label">Search Boards:</div>
+
+                            <input type="text" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
+                            </br>
+                            <input class="ui button blue" type="submit" name="submit" value="Search">
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+</div>
+</body>
+</html>
