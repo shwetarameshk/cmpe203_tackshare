@@ -16,6 +16,7 @@ from urlparse import urlparse
 import urllib2
 from django.core.files import File
 from django.core.mail import send_mail
+import Image
   #add imprt of content file wrapper
 from django.core.files.base import ContentFile
 import connect
@@ -118,10 +119,14 @@ def saveTack(request):
         boardName = request.POST["new_board"]
     else:
         boardName = request.POST["ex_board"]
-    a = request.POST["file"]
+    try:
+        im=Image.open(request.FILES["file"])
+        tackFileType = "image"
+    except IOError:
+        tackFileType = "not image"
     TackImages(Filename=request.POST["tack_name"],
-               image=request.FILES["file"],
                tackFile = request.FILES["file"],
+               fileType = tackFileType,
                tags=request.POST["tags"],
                username=get_user(request),
                bookmark=request.POST["tack_url"],
@@ -364,7 +369,7 @@ def editTack(request):
 
     #Check if file input is given, then use it. Otherwise, check the url. If both are provided, file input gets precedence.
     if (file_input):
-        tack.image = file_input
+        tack.tackFile = file_input
     elif img_url:
         r = requests.get(img_url)
         img_temp = NamedTemporaryFile(delete=True)
@@ -373,7 +378,7 @@ def editTack(request):
         parsed_uri=urlparse(img_url)
         domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
         print domain
-        tack.image = File(img_temp)
+        tack.tackFile = File(img_temp)
         tack.bookmark = domain
 
 
@@ -389,7 +394,12 @@ def videoTest(request):
 @login_required
 @csrf_exempt
 def displayVideo (request):
-    return render_to_response("VideoTest2.html",{'MEDIA_URL': settings.MEDIA_URL})
+    try:
+        im=Image.open(request.FILES["file"])
+        p = "image"
+    except IOError:
+        p = "not image"
+    return render_to_response("VideoTest2.html",{"p":p})
 
 @login_required
 @csrf_exempt

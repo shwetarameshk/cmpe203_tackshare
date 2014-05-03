@@ -15,7 +15,8 @@ class Users(models.Model):
 
 class TackImages(models.Model):
     Filename = models.TextField()
-    image = models.ImageField(upload_to="photos")
+    tackFile = models.FileField(upload_to="tackFiles")
+    fileType = models.TextField()
     tags = ListField()
     bookmark = models.URLField()
     username = models.TextField()

@@ -35,7 +35,7 @@
         <div class="ui simple dropdown item">
             <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
             <div class="menu">
-               <a class="item" href="/editBoardPrivacy?boardName={{ boardName }}"><i class="edit icon"></i> Edit Board</a>
+                <a class="item" href="/editBoardPrivacy?boardName={{ boardName }}"><i class="edit icon"></i> Edit Board</a>
                 <a class="item" href="/shareBoard?boardName={{ boardName }}"><i class="share icon"></i> Share Board</a>
                 <a class="item" href="/newurltack">Create Tack from Url</a>
 
@@ -54,64 +54,49 @@
 </div>
 <section class="container">
     <div id="wrapper">
-{#        <div class="ui label">{% if  sharedWith == "none" %}The board is not shared with anyone#}
-{#        {% else %} This board is currently shared with: <br>#}
-{#            {% for userName in sharedWith %}#}
-{#                <div class="ui label">{{ userName }}#}
-{#                </div></div><br>#}
-{#            {% endfor %}{% endif %}#}
-{#    </div><br>#}
-    {% if  tacks == "" %}<div class="ui label">There are no tacks in this board! Add a tack!</div> {% endif %}
-    <div class = "ui five column grid">
-        <div class="column">
-            <div class="ui segment">
-                <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" style="text-decoration: none" >
-                    <div class="image">
-                        <i class="massive black add sign icon"></i>
-                        <div class="ui label">Create New Tack!</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-            <div class="column">
-            <div class="ui segment">
-            <a href="/displayVideoTack"  rel="shadowbox" class="rounded ui image" >
-                <video width="200" height="200" controls>
-                    <source src="{{ MEDIA_URL }}small_webm.webm" type="video/webm">
-                    <source src="{{ MEDIA_URL }}small_ogg.ogg" type="video/ogg">
-                    <source src="{{ MEDIA_URL }}small_m.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </a>
-            </div>
-        </div>
-        {% for tack in tacks %}
-
+        {#        <div class="ui label">{% if  sharedWith == "none" %}The board is not shared with anyone#}
+        {#        {% else %} This board is currently shared with: <br>#}
+        {#            {% for userName in sharedWith %}#}
+        {#                <div class="ui label">{{ userName }}#}
+        {#                </div></div><br>#}
+        {#            {% endfor %}{% endif %}#}
+        {#    </div><br>#}
+        {% if  tacks == "" %}<div class="ui label">There are no tacks in this board! Add a tack!</div> {% endif %}
+        <div class = "ui five column grid">
             <div class="column">
                 <div class="ui segment">
-
-                    <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
-{#                        {% if tack.image == "r'^.jpg" %}#}
-
-
-                            <img src="{{ MEDIA_URL }}{{ tack.image }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
-                        {% if tack.isFavorite %}
-                            <a class="ui right blue corner label item" style="text-decoration:none;">
-                                <i class="star icon"></i>
-                            </a>
-                            {% endif %}
-
-
-
-
-
-
+                    <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" style="text-decoration: none" >
+                        <div class="image">
+                            <i class="massive black add sign icon"></i>
+                            <div class="ui label">Create New Tack!</div>
+                        </div>
                     </a>
-
                 </div>
             </div>
-        {% endfor %}
-    </div>
+            {% for tack in tacks %}
+                <div class="column">
+                    <div class="ui segment">
+                        <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
+                            {% if tack.fileType == "image" %}
+                                <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                            {% else %}
+                                <video width="200" height="200" controls>
+                                    <source src="{{ MEDIA_URL }}small_webm.webm" type="video/webm">
+                                    <source src="{{ MEDIA_URL }}small_ogg.ogg" type="video/ogg">
+                                    <source src="{{ MEDIA_URL }}small_m.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% endif %}
+                            {% if tack.isFavorite %}
+                                <a class="ui right blue corner label item" style="text-decoration:none;">
+                                    <i class="star icon"></i>
+                                </a>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </section>
 </body>
