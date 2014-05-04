@@ -16,7 +16,8 @@ from urlparse import urlparse
 import urllib2
 from django.core.files import File
 from django.core.mail import send_mail
-import Image
+from PIL import Image
+
   #add imprt of content file wrapper
 from django.core.files.base import ContentFile
 import connect
@@ -343,7 +344,10 @@ def confirmFav(request):
     print boardName
     tacks = TackImages.objects.filter(Filename=tackName)
     tack = tacks[0]
-    tack.isFavorite=True
+    if(tack.isFavorite):
+        tack.isFavorite=False
+    else:
+        tack.isFavorite=True
     tack.save()
     print "Marked Favourite"
     print tack.fileType
