@@ -34,11 +34,11 @@ a.hiddenanchor{
 }
 /** The wrapper that will contain our two forms **/
 #wrapper{
-	width: 60%;
+	width: 80%;
 	right: 0px;
 	min-height: 560px;	
 	margin: 0px auto;	
-	width: 500px;
+	width: 800px;
 	position: relative;	
 }
 /**** Styling the form elements **/

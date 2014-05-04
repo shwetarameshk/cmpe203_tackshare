@@ -132,7 +132,6 @@ def saveTack(request):
                username=get_user(request),
                bookmark=request.POST["tack_url"],
                board=boardName
-
                ).save()
     board = Boards.objects.get(Name=boardName)
     tack_name = request.POST["tack_name"]
@@ -395,22 +394,6 @@ def editTack(request):
     tack.save()
     return redirect("/displayTack?tackName=" + tack.Filename)
 
-
-@login_required
-@csrf_exempt
-def videoTest(request):
-    return render_to_response("VideoTest.html",{'MEDIA_URL': settings.MEDIA_URL})
-
-@login_required
-@csrf_exempt
-def displayVideo (request):
-    try:
-        im=Image.open(request.FILES["file"])
-        p = "image"
-    except IOError:
-        p = "not image"
-    return render_to_response("VideoTest2.html",{"p":p})
-
 @login_required
 @csrf_exempt
 def editBoardPrivacy(request):
@@ -428,12 +411,12 @@ def changeBoardPrivacy(request):
     board.save()
     return redirect("/board?boardName="+boardName)
 
-def sidebarTest(request):
-    return render_to_response("SidebarTest.html")
-
 @csrf_exempt
 def viewFavorites(request):
     tacks=TackImages.objects.filter(isFavorite=True)
     if not tacks:
         tacks=""
     return render_to_response("FavoritesHome.html",{'tacks':tacks})
+
+def displayInfoScreen(request):
+    return render_to_response("InfoScreen.html")
