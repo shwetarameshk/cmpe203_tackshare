@@ -33,9 +33,9 @@
                             <i class="star icon"></i>
                         </a>
                         {% if tack.fileType == "image" %}
-                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
                         {% else %}
-                            <video width="200" height="200" controls>
+                            <video width="300" height="400" controls>
                                 <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">
                                 <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/ogg">
                                 <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/mp4">
@@ -72,6 +72,15 @@
                             <a class="item" href="#" style="text-decoration: none" id="edit_tack_link">
                                 <i class="edit icon"></i> Edit Tack
                             </a>
+                        </div>
+                        <div class="content">
+                            <div class="ui star rating" data-rating="5">
+                                <i class="icon active"></i>
+                                <i class="icon active"></i>
+                                <i class="icon active"></i>
+                                <i class="icon active"></i>
+                                <i class="icon"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
