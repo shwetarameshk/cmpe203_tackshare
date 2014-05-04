@@ -534,7 +534,7 @@ def viewFavorites(request):
     tacks=TackImages.objects.filter(isFavorite=True)
     if not tacks:
         tacks=""
-    return render_to_response("FavoritesHome.html",{'tacks':tacks})
+    return render_to_response("FavoritesHome.html",{'MEDIA_URL': settings.MEDIA_URL,'tacks':tacks})
 
 def displayInfoScreen(request):
     """
