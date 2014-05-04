@@ -499,4 +499,4 @@ def searchTags(request):
 
     if (len(tacked)==0):
         tacked=""
-    return render_to_response("DisplaySeachTags.html",{'boardName':board,'tacks':tacked})
+    return render_to_response("DisplaySeachTags.html",{'MEDIA_URL': settings.MEDIA_URL,'boardName':board,'tacks':tacked})
