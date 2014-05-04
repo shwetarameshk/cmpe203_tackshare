@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import requests
-from tack.models import Users, TackImages, Boards, subscription, UserStats
+from tack.models import Users, TackImages, Boards, subscription
 from django.db.models import Q
 from tackshare import settings
 from django.contrib.auth import get_user

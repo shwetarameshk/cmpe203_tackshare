@@ -4,6 +4,9 @@ from djangotoolbox.fields import ListField
 
 
 class Users(models.Model):
+    """
+    This class contains fields for User related information
+    """
     Firstname = models.TextField()
     Lastname = models.TextField()
     Username = models.TextField()
@@ -14,6 +17,9 @@ class Users(models.Model):
         return self.Username
 
 class TackImages(models.Model):
+    """
+    This class contains fields for Tacks related information
+    """
     Filename = models.TextField()
     tackFile = models.FileField(upload_to="tackFiles")
     fileType = models.TextField()
@@ -27,6 +33,9 @@ class TackImages(models.Model):
         return self.Filename
 
 class Boards(models.Model):
+    """
+    This class contains fields for Boards related information
+    """
     Name = models.TextField()
     Description = models.TextField()
     Privacy = models.TextField()
@@ -38,14 +47,10 @@ class Boards(models.Model):
         return self.Name
 
 class subscription(models.Model):
+    """
+    This class contains fields for Email Subscription related information
+    """
     username=models.TextField()
     follow = models.TextField()
     addtack = models.TextField()
     favorite = models.TextField()
-
-class UserStats (models.Model):
-    userName = models.TextField()
-    numBoards = models.TextField()
-    numPublicBoards = models.TextField()
-    numPrivateBoards = models.TextField()
-    numTacks = models.TextField()
