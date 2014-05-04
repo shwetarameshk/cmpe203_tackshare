@@ -68,9 +68,9 @@
                             <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
                         {% else %}
                             <video width="200" height="200" controls>
-                                <source src="{{ MEDIA_URL }}small_webm.webm" type="video/webm">
-                                <source src="{{ MEDIA_URL }}small_ogg.ogg" type="video/ogg">
-                                <source src="{{ MEDIA_URL }}small_m.mp4" type="video/mp4">
+                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">
+                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/ogg">
+                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         {% endif %}

@@ -6,15 +6,15 @@
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
 
-   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
 
     <script type="text/javascript">
         function toggleSB(){
             $('.demo.sidebar')
                     .sidebar({
-{#                overlay: true#}
-            })
+                        {#                overlay: true#}
+                    })
                     .sidebar('toggle')
             ;
         }
@@ -107,69 +107,29 @@
 <a href="/videoTest">click to test video</a>
 <a href="/sidebarTest">click to test sidebar</a><br><br>
 <div class="ui segment">
-<div class="ui right demo sidebar">
-    <div id="searchUsers" class="ui form segment" >
-        <form action="/searchUsers" method="post" enctype="multipart/form-data">
-            <div style="display:inline;">
-                <div class="ui label">Search Users:</div>
-                <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
-                </br>
-                <input class="ui button blue" type="submit" name="submit" value="Search">
-            </div>
-        </form>
-    </div>
+    <div class="ui right demo sidebar">
+        <div id="searchUsers" class="ui form segment" >
+            <form action="/searchUsers" method="post" enctype="multipart/form-data">
+                <div style="display:inline;">
+                    <div class="ui label">Search Users:</div>
+                    <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
+                    </br>
+                    <input class="ui button blue" type="submit" name="submit" value="Search">
+                </div>
+            </form>
+        </div>
 
-    <div id="searchBoards" class="ui form segment" >
-        <form action="/searchBoards" method="post" enctype="multipart/form-data">
-            <div style="display:inline;">
-                <div class="ui label">Search Boards:</div>
-                <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
-                </br>
-                <input class="ui button blue" type="submit" name="submit" value="Search">
-            </div>
-        </form>
-    </div>
-</div></div>
-
-{#<div class="container">#}
-{#    <section>#}
-{#        <div id="container_demo">#}
-{#            <div id="wrapper">#}
-{#                <div id="searchUsers" class="ui form segment" >#}
-{#                    <form action="/searchUsers" method="post" enctype="multipart/form-data">#}
-{#                        <div style="display:inline;">#}
-{#                            <div class="ui label">Search Users:</div>#}
-{##}
-{#                            <input type="text" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />#}
-{#                            </br>#}
-{#                            <input class="ui button blue" type="submit" name="submit" value="Search">#}
-{##}
-{#                        </div>#}
-{##}
-{##}
-{#                    </form>#}
-{##}
-{#                </div>#}
-{##}
-{#                <div id="searchBoards" class="ui form segment" >#}
-{#                    <form action="/searchBoards" method="post" enctype="multipart/form-data">#}
-{#                        <div style="display:inline;">#}
-{#                            <div class="ui label">Search Boards:</div>#}
-{##}
-{#                            <input type="text" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />#}
-{#                            </br>#}
-{#                            <input class="ui button blue" type="submit" name="submit" value="Search">#}
-{##}
-{#                        </div>#}
-{##}
-{##}
-{#                    </form>#}
-{##}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </section>#}
-{# </div>#}
+        <div id="searchBoards" class="ui form segment" >
+            <form action="/searchBoards" method="post" enctype="multipart/form-data">
+                <div style="display:inline;">
+                    <div class="ui label">Search Boards:</div>
+                    <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
+                    </br>
+                    <input class="ui button blue" type="submit" name="submit" value="Search">
+                </div>
+            </form>
+        </div>
+    </div></div>
 
 
 <section class="container">
@@ -178,13 +138,15 @@
         {% else %}Boards you created:</div>
             <div class = "ui five column grid">
             <div class="column">
-                <div class="ui segment">
-                    <a id="board_ref" href="/createboard" style="text-decoration: none">
-                        <div class="image">
-                            <i class="massive black add sign icon"></i><br>
-                            <div class="ui label">Create New Board!</div>
-                        </div>
-                    </a>
+                <div class="ui stacked segment">
+                    <div class="ui stacked segment">
+                        <a id="board_ref" href="/createboard" style="text-decoration: none">
+                            <div class="image">
+                                <i class="massive black add sign icon"></i><br>
+                                <div class="ui label">Create New Board!</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
             {% for board in yourBoards %}
