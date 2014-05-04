@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Statistics</title>
+    <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
+    <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
+</head>
+<body>
+<div class="ui inverted tiered menu">
+    <div class="left menu">
+        <div class="item">
+            <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
+        </div>
+    </div>
+    <div class="right menu">
+        <div class="item">
+            <a class="item" href="/">
+                <i class="home icon"></i> Home
+            </a>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/createtack">Create Tack</a>
+                <a class="item" href="/createboard">Create Board</a>
+                <a class="item" href="/newurltack">Create Tack from Url</a>
+                <a class="item" href="/viewFavorites"><i class="star icon"></i>View Favorites</a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="user icon"></i>User<i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/update">Update Profile</a>
+                <a class="item" href="/manageemail">Email Management</a>
+                <a class="item" href="/logout">Logout</a>
+            </div>
+        </div>
+        <div class="item">
+            <a class="item" onclick="toggleSB()">
+                <i class="search icon"></i> Search
+            </a>
+        </div>
+        <div class="item">
+            <a class="item" href="/displayInfoScreen">
+                <i class="info icon"></i> About
+            </a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <section>
+        <div id="container_demo">
+            <div id="wrapper">
+                <div class="ui items">
+                   <div class="item">
+                        <div class="content">
+                            <div class="name">UserName</div>
+                            <p class="description">{{ userStats.userName }} boards:</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            <div class="name">Boards</div>
+                            <p class="description">{{ userStats.numBoards }} boards:</p>
+                            <p class="description">{{ userStats.numPublicBoards }} public boards</p>
+                            <p class="description">{{ userStats.numPrivateBoards }} private boards</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

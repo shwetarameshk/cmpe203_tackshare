@@ -94,7 +94,18 @@
             <div class="menu">
                 <a class="item" href="/update">Update Profile</a>
                 <a class="item" href="/manageemail">Email Management</a>
-                <a class="item" href="/logout">Logout</a>
+                <a class="item">View Statistics<i class="dropdown icon"></i><div class="ui compact menu">
+                  <div class="ui simple dropdown item">
+                        <div class="content">
+                            <div class="name">You have:</div>
+{#                            <p class="description">{{ numBoards }} boards</p>#}
+                            <p class="description">{{ numPublicBoards }} public board(s)</p>
+                            <p class="description">{{ numPrivateBoards }} private board(s)</p>
+                            <p class="description">{{ numTacks }} tacks</p>
+                        </div>
+                  </div>
+                </div></a>
+               <a class="item" href="/logout">Logout</a>
             </div>
         </div>
         <div class="item">

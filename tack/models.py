@@ -42,3 +42,10 @@ class subscription(models.Model):
     follow = models.TextField()
     addtack = models.TextField()
     favorite = models.TextField()
+
+class UserStats (models.Model):
+    userName = models.TextField()
+    numBoards = models.TextField()
+    numPublicBoards = models.TextField()
+    numPrivateBoards = models.TextField()
+    numTacks = models.TextField()

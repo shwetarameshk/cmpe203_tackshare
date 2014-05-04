@@ -44,5 +44,6 @@ urlpatterns = patterns('',
             'document_root': settings.MEDIA_ROOT,
         }),
     url(r'^editTack',views.editTack,name='editTack'),
-    url(r'^displayInfoScreen',views.displayInfoScreen,name='displayInfoScreen')
+    url(r'^displayInfoScreen',views.displayInfoScreen,name='displayInfoScreen'),
+    url(r'^viewStats',views.viewStats,name='viewStats')
 )

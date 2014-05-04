@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import requests
-from tack.models import Users, TackImages, Boards, subscription
+from tack.models import Users, TackImages, Boards, subscription, UserStats
 from django.db.models import Q
 from tackshare import settings
 from django.contrib.auth import get_user
@@ -39,10 +39,15 @@ def home(request):
                 visibleBoards.append(board)
         if not visibleBoards:
             visibleBoards = "None"
-        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,'otherBoards':visibleBoards})
-        # privateBoards = Boards.objects.order_by('Name').filter(username=get_user(request),Privacy="Private")[:10]
-        # publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        # return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'tackimages':tackimages,'privateBoards':privateBoards,'publicBoards':publicBoards})
+        numBoards = Boards.objects.filter(username=whoami).count()
+        numPublicBoards = Boards.objects.filter(username=whoami,Privacy='Public').count()
+        numPrivateBoards = Boards.objects.filter(username=whoami,Privacy='Private').count()
+        numTacks = TackImages.objects.filter(username=whoami).count()
+        return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,
+                                                     'otherBoards':visibleBoards,
+                                                    'numPublicBoards':numPublicBoards,
+                                                    'numPrivateBoards':numPrivateBoards,
+                                                    'numTacks':numTacks})
     else:
         return render_to_response('Home.html')
 
@@ -428,3 +433,21 @@ def viewFavorites(request):
 
 def displayInfoScreen(request):
     return render_to_response("InfoScreen.html")
+
+def viewStats(request):
+    userName = get_user(request)
+    numBoards = Boards.objects.filter(username=userName).count()
+    numPublicBoards = Boards.objects.filter(username=userName,Privacy='Public').count()
+    numPrivateBoards = Boards.objects.filter(username=userName,Privacy='Private').count()
+    numTacks = TackImages.objects.filter(username=userName).count()
+    UserStats(userName=userName,
+                  numBoards=numBoards,
+                  numPrivateBoards=numPrivateBoards,
+                  numPublicBoards=numPublicBoards,
+                  numTacks=numTacks).save()
+    userStats = UserStats.objects.filter(userName=userName)
+    return render_to_response("UserStats.html",{'userName':userName,
+                                                'numBoards':numBoards,
+                                                'numPublicBoards':numPublicBoards,
+                                                'numPrivateBoards':numPrivateBoards,
+                                                'numTacks':numTacks})
