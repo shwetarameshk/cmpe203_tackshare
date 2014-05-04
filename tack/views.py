@@ -176,9 +176,17 @@ def UrlsaveTack(request):
     parsed_uri=urlparse(img_url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
+    enteredTags=request.POST["tags"]
+    if not enteredTags:
+        tagArray=[]
+    else:
+        tagArray=[]
+        tagsSplit=enteredTags.split()
+        for ts in tagsSplit:
+            tagArray.append(ts)
     TackImages(Filename=request.POST["tack_name"],
                image=File(img_temp),
-               tags=request.POST["tags"],
+               tags=tagArray,
                username=get_user(request),
                bookmark=domain,
                board=boardname
