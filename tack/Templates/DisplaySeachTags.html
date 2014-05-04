@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>{{ boardName }}</title>
+    <meta charset="UTF-8" />
+
+
     <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
     <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
     <script type="text/javascript" src="/static/shadowbox/shadowbox.js"></script>
     <script type="text/javascript">
         Shadowbox.init();
-
     </script>
 
-
-    <title>Tackshare</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 <div class="ui inverted tiered menu">
@@ -34,6 +37,7 @@
                 <a class="item" href="/createtack">Create Tack</a>
                 <a class="item" href="/createboard">Create Board</a>
                 <a class="item" href="/newurltack">Create Tack from Url</a>
+                <a class="item" href="/viewFavorites">View Favorites</a>
             </div>
         </div>
         <div class="ui simple dropdown item">
@@ -42,29 +46,33 @@
                 <a class="item" href="/update">Update Profile</a>
                 <a class="item" href="/manageemail">Email Management</a>
                 <a class="item" href="/logout">Logout</a>
+
             </div>
         </div>
     </div>
 </div>
 
-<div>
-    <a href="/FollowUser?userName={{ userName }}"  rel="shadowbox" class="rounded ui image" style="float: right;">Follow user</a>
-</div>
-
-
-<section>
+<section class="container">
     <div id="wrapper">
-        <div class="ui large blue label">Public Boards</div>
+        {% if  tacks == "" %}
+            <div class="ui label">No tacks match your search!{% endif %}</div>
+        
         <div class = "ui five column grid">
-            {% for board in publicBoards %}
+            {% for tack in tacks %}
                 <div class="column">
                     <div class="ui stacked segment">
                         <div class="ui stacked segment">
-                            <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
-                                <div class="image">
-                                    <img class="rounded ui image" src="/static/images/board4.png"src="/static/images/board2.png" alt='No Image' width="200" height="200">
-                                    <h2><span>{{ board.Name }}</span></h2>
-                                </div>
+                            <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
+                                {% if tack.fileType == "image" %}
+                                    <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                                {% else %}
+                                    <video width="200" height="200" controls>
+                                        <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">
+                                        <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/ogg">
+                                        <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
                             </a>
                         </div>
                     </div>
@@ -73,9 +81,5 @@
         </div>
     </div>
 </section>
-
-
-
-
 </body>
 </html>

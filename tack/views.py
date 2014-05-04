@@ -131,10 +131,20 @@ def saveTack(request):
         tackFileType = "image"
     except IOError:
         tackFileType = "not image"
+    enteredTags=request.POST["tags"]
+    if not enteredTags:
+        tagArray=[]
+    else:
+        tagArray=[]
+        tagsSplit=enteredTags.split()
+        for ts in tagsSplit:
+            tagArray.append(ts)
+
     TackImages(Filename=request.POST["tack_name"],
                tackFile = request.FILES["file"],
                fileType = tackFileType,
-               tags=request.POST["tags"],
+               #tags=request.POST["tags"],
+               tags=tagArray,
                username=get_user(request),
                bookmark=request.POST["tack_url"],
                board=boardName
@@ -451,3 +461,34 @@ def viewStats(request):
                                                 'numPublicBoards':numPublicBoards,
                                                 'numPrivateBoards':numPrivateBoards,
                                                 'numTacks':numTacks})
+
+@csrf_exempt
+def searchTags(request):
+    tackArray=[]
+    tackList=[]
+    tacked=[]
+    searchString=request.POST["search"]
+    print searchString
+    board=Boards.objects.filter(Privacy="Public")
+    if not board:
+        board=""
+    else:
+        for b in board:
+            tackList=TackImages.objects.all()
+        print tackList
+        if not tackList:
+            tacked=""
+        else:
+             for tack in tackList:
+                if not tack.tags:
+                    print "No tags"
+                else:
+                    print tack.tags
+                    for tag in tack.tags:
+                        print tag
+                        if(searchString==tag):
+                            tacked.append(tack)
+
+    if (len(tacked)==0):
+        tacked=""
+    return render_to_response("DisplaySeachTags.html",{'boardName':board,'tacks':tacked})
