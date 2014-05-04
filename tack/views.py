@@ -26,6 +26,9 @@ import connect
 
 
 def home(request):
+    """
+    This method is used to display the user's dashboard. Dashboard contains all the boards created by the user and the boards shared with the user.
+    """
     if request.user.is_authenticated():
         whoami = get_user(request)
         yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
@@ -53,16 +56,25 @@ def home(request):
 
 @login_required
 def logout_user(request):
+    """
+    This method is used to log out the user from the current session.
+    """
     logout(request)
     return render_to_response('Home.html')
 
 @login_required
 def update_user(request):
+    """
+    This method is used to update the user's profile.
+    """
     return render_to_response('updateprofile.html', {'firstname':User.get_full_name(request.user),'username':User.get_username(request.user)})
 
 @login_required
 @csrf_exempt
 def update_user_profile(request):
+    """
+    This method is used to update the user's password.
+    """
     if request.POST["password"] == request.POST["passwordAgain"]:
         u = User.objects.get(username__exact=str(get_user(request)))
         u.set_password(request.POST["password"])
@@ -73,6 +85,9 @@ def update_user_profile(request):
 
 @csrf_exempt
 def login_user(request):
+    """
+    This method is for user's login and authentication
+    """
     user = authenticate(username=request.POST["username"], password=request.POST["password"])
     if user is not None:
         login(request, user)
@@ -83,6 +98,9 @@ def login_user(request):
 
 @csrf_exempt
 def register(request):
+    """
+    This method is used to register a new user.
+    """
     if request.POST["password"] == request.POST["passwordAgain"]:
         user = User.objects.create_user(request.POST["username"],request.POST["email"],request.POST["password"])
         user.first_name=request.POST["firstname"]
@@ -100,18 +118,27 @@ def register(request):
 @login_required
 @csrf_exempt
 def createTack(request):
+    """
+    This method is used to display the Create Tack form
+    """
     boards = Boards.objects.filter(username=get_user(request))
     return render_to_response("CreateTack.html",{'user': str(get_user(request)),'boards':boards})
 
 @login_required
 @csrf_exempt
 def createTackUrl(request):
+    """
+    This method is used to display the Create Tack from URL form
+    """
     boards = Boards.objects.filter(username=get_user(request))
     return render_to_response("CreatetackFromUrl.html",{'user': str(get_user(request)),'boards':boards})
 
 @login_required
 @csrf_exempt
 def update_dashboard(request):
+    """
+    This method is used to save a new board.
+    """
     Boards(Name=request.POST["board_name"],
            Description=request.POST["board_desc"],
            Privacy=request.POST["board_privacy"],
@@ -122,6 +149,9 @@ def update_dashboard(request):
 @login_required
 @csrf_exempt
 def saveTack(request):
+    """
+    This method is used to save a new tack.
+    """
     if request.POST["new_board"]!="":
         boardName = request.POST["new_board"]
     else:
@@ -160,6 +190,9 @@ def saveTack(request):
 @login_required
 @csrf_exempt
 def UrlsaveTack(request):
+    """
+    This method is used to save a new tack.
+    """
     if request.POST["new_board"]!="":
         boardname = request.POST["new_board"]
     else:
@@ -200,6 +233,9 @@ def UrlsaveTack(request):
 @login_required
 @csrf_exempt
 def saveBoard(request):
+    """
+    This method is used to create a new board
+    """
     response_data = {}
     response_data['result']="failure"
     try:
@@ -221,7 +257,7 @@ def createBoard(request):
 @login_required
 def showTacks(request):
     """
-    Show tacks for a board
+    This method is used to display the tacks in a selected board.
     """
     boardName = request.GET.get('boardName')
     board = Boards.objects.get(Name=boardName)
@@ -238,6 +274,9 @@ def showTacks(request):
 
 @login_required
 def displayTack(request):
+    """
+    This method is used to display the details of a tack.
+    """
     tackName = request.GET.get('tackName')
     tacks = TackImages.objects.filter(Filename=tackName)
     tack = tacks[0]
@@ -251,6 +290,9 @@ def displayTack(request):
 
 @login_required
 def shareBoard(request):
+    """
+    This method is used to display the Share Board form
+    """
     boardName = request.GET.get('boardName')
     board = Boards.objects.get(Name=boardName)
     if not board.VisibleToUsers:
@@ -262,6 +304,9 @@ def shareBoard(request):
 @login_required
 @csrf_exempt
 def unShareBoard(request):
+    """
+    This method is used to edit the list of users a board is shared with.
+    """
     boardName = request.GET.get('boardName')
     userName = request.GET.get('userName')
     board = Boards.objects.get(Name=boardName)
@@ -273,6 +318,9 @@ def unShareBoard(request):
 @login_required
 @csrf_exempt
 def shareWithUser(request):
+    """
+    This method is used to share a board with a user.
+    """
     shareWith = request.POST['search']
     boardName = request.POST['boardName']
     board = Boards.objects.get(Name=boardName)
@@ -284,6 +332,9 @@ def shareWithUser(request):
 
 @login_required
 def manageemail(request):
+    """
+    This method is used to display the Email Management form
+    """
     subsc = subscription.objects.filter(username=get_user(request))
     print subsc.values()
     return render_to_response("ManageEmail.html",{'subscriptions':subsc})
@@ -291,6 +342,9 @@ def manageemail(request):
 @csrf_exempt
 @login_required
 def savesubscription(request):
+    """
+    This method is used to save the user's email preferences.
+    """
     subsc=subscription.objects.filter(username = get_user(request)).update(
         follow=request.POST['onoffswitch1'],
         addtack=request.POST['onoffswitch2'],
@@ -300,10 +354,16 @@ def savesubscription(request):
 @csrf_exempt
 @login_required
 def createTackInBoard(request):
+    """
+    This method is used to display the Create Tack inside Board form
+    """
     return render_to_response("CreateTackInBoard.html",{'user': str(get_user(request)),'boardName':request.GET.get('boardName')})
 
 @csrf_exempt
 def searchUsers(request):
+    """
+    This method is used to search for registered users.
+    """
     searchString=request.POST["search"]
     print searchString
     userResults=User.objects.filter(username=searchString)
@@ -321,6 +381,9 @@ def searchUsers(request):
 
 @csrf_exempt
 def autocompleteModel(request):
+    """
+    This method is used for processing the auto complete option for search users.
+    """
    # search_qs = User.objects.filter(username__startswith=request.REQUEST['search'])
     if request.is_ajax():
         searchString=request.POST["search"]
@@ -335,12 +398,18 @@ def autocompleteModel(request):
 
 @csrf_exempt
 def FollowUser(request):
+    """
+    This method is used to display the Follow User form
+    """
     userName=request.GET.get('userName')
     print userName
     return render_to_response("FollowUser.html",{'userName':userName})
 
 @csrf_exempt
 def AutoBoardComplete(request):
+    """
+    This method is used for processing the auto complete option for search boards.
+    """
     if request.is_ajax():
         searchString=request.POST["search"]
         search_qs = Boards.objects.filter(Name__startswith=searchString).filter(Privacy="Public")
@@ -353,6 +422,9 @@ def AutoBoardComplete(request):
 
 @csrf_exempt
 def searchBoards(request):
+    """
+    This method is used to search for all public boards.
+    """
     searchString=request.POST["search"]
     print searchString
     board = Boards.objects.filter(Name=searchString).filter(Privacy="Public")
@@ -368,6 +440,9 @@ def searchBoards(request):
 
 @csrf_exempt
 def confirmFav(request):
+    """
+    This method is used to mark a tack as Favorite
+    """
     tackName=request.GET.get("tackName")
     boardName=request.GET.get("boardName")
     print tackName
@@ -389,6 +464,9 @@ def confirmFav(request):
 @csrf_exempt
 @login_required
 def editTack(request):
+    """
+    This method is used to edit/update a tack.
+    """
     tackName = request.POST.get('tackName')
     img_url = request.POST["tack_url"]
     file_input = request.FILES.get('file')
@@ -428,6 +506,9 @@ def editTack(request):
 @login_required
 @csrf_exempt
 def editBoardPrivacy(request):
+    """
+    This method is used to display the Edit Board Privacy form.
+    """
     boardName = request.GET.get('boardName')
     board = Boards.objects.get(Name=boardName)
     return render_to_response("EditBoardPrivacy.html",{'board':board})
@@ -435,6 +516,9 @@ def editBoardPrivacy(request):
 @login_required
 @csrf_exempt
 def changeBoardPrivacy(request):
+    """
+    This method is used to edit/update a board's privacy.
+    """
     boardName = request.POST['boardName']
     boardPrivacy = request.POST["board_privacy"]
     board = Boards.objects.get(Name=boardName)
@@ -444,34 +528,25 @@ def changeBoardPrivacy(request):
 
 @csrf_exempt
 def viewFavorites(request):
+    """
+    This method is used to display the user's favorite tacks.
+    """
     tacks=TackImages.objects.filter(isFavorite=True)
     if not tacks:
         tacks=""
     return render_to_response("FavoritesHome.html",{'tacks':tacks})
 
 def displayInfoScreen(request):
+    """
+    This method is used to display the Information page.
+    """
     return render_to_response("InfoScreen.html")
-
-def viewStats(request):
-    userName = get_user(request)
-    numBoards = Boards.objects.filter(username=userName).count()
-    numPublicBoards = Boards.objects.filter(username=userName,Privacy='Public').count()
-    numPrivateBoards = Boards.objects.filter(username=userName,Privacy='Private').count()
-    numTacks = TackImages.objects.filter(username=userName).count()
-    UserStats(userName=userName,
-                  numBoards=numBoards,
-                  numPrivateBoards=numPrivateBoards,
-                  numPublicBoards=numPublicBoards,
-                  numTacks=numTacks).save()
-    userStats = UserStats.objects.filter(userName=userName)
-    return render_to_response("UserStats.html",{'userName':userName,
-                                                'numBoards':numBoards,
-                                                'numPublicBoards':numPublicBoards,
-                                                'numPrivateBoards':numPrivateBoards,
-                                                'numTacks':numTacks})
 
 @csrf_exempt
 def searchTags(request):
+    """
+    This method is used to search tacks by tags.
+    """
     tackArray=[]
     tackList=[]
     tacked=[]
