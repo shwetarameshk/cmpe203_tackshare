@@ -97,17 +97,17 @@
                 <a class="item" href="/update">Update Profile</a>
                 <a class="item" href="/manageemail">Email Management</a>
                 <a class="item">View Statistics<i class="dropdown icon"></i><div class="ui compact menu">
-                  <div class="ui simple dropdown item">
+                    <div class="ui simple dropdown item">
                         <div class="content">
                             <div class="name">You have:</div>
-{#                            <p class="description">{{ numBoards }} boards</p>#}
+                            {#                            <p class="description">{{ numBoards }} boards</p>#}
                             <p class="description">{{ numPublicBoards }} public board(s)</p>
                             <p class="description">{{ numPrivateBoards }} private board(s)</p>
                             <p class="description">{{ numTacks }} tacks</p>
                         </div>
-                  </div>
+                    </div>
                 </div></a>
-               <a class="item" href="/logout">Logout</a>
+                <a class="item" href="/logout">Logout</a>
             </div>
         </div>
         <div class="item">
@@ -123,31 +123,31 @@
     </div>
 </div>
 
-<div class="ui segment">
-    <div class="ui right demo sidebar">
-        <div id="searchUsers" class="ui form segment" >
-            <form action="/searchUsers" method="post" enctype="multipart/form-data">
-                <div style="display:inline;">
-                    <div class="ui label">Search Users:</div>
-                    <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
-                    </br>
-                    <input class="ui button blue" type="submit" name="submit" value="Search">
-                </div>
-            </form>
-        </div>
 
-        <div id="searchBoards" class="ui form segment" >
-            <form action="/searchBoards" method="post" enctype="multipart/form-data">
-                <div style="display:inline;">
-                    <div class="ui label">Search Boards:</div>
-                    <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
-                    </br>
-                    <input class="ui button blue" type="submit" name="submit" value="Search">
-                </div>
-            </form>
-        </div>
+<div class="ui right demo sidebar">
+    <div id="searchUsers" class="ui form segment" >
+        <form action="/searchUsers" method="post" enctype="multipart/form-data">
+            <div style="display:inline;">
+                <div class="ui label">Search Users:</div>
+                <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
+                </br>
+                <input class="ui button blue" type="submit" name="submit" value="Search">
+            </div>
+        </form>
+    </div>
+
+    <div id="searchBoards" class="ui form segment" >
+        <form action="/searchBoards" method="post" enctype="multipart/form-data">
+            <div style="display:inline;">
+                <div class="ui label">Search Boards:</div>
+                <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
+                </br>
+                <input class="ui button blue" type="submit" name="submit" value="Search">
+            </div>
+        </form>
     </div>
 </div>
+
 
 
 <section class="container">
@@ -192,13 +192,13 @@
                 <div class="column">
                     <div class="ui stacked segment">
                         <div class="ui stacked segment">
-                        <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
-                            <div class="image">
-                                <img class="rounded ui image" src="/static/images/board4.png" alt='No Image' width="200" height="200">
-                                <h2><span>{{ board.Name }}</span></h2>
-                            </div>
-                        </a>
-                    </div>
+                            <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
+                                <div class="image">
+                                    <img class="rounded ui image" src="/static/images/board4.png" alt='No Image' width="200" height="200">
+                                    <h2><span>{{ board.Name }}</span></h2>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endfor %}{% endif %}
