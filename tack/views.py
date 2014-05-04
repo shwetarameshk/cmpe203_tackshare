@@ -17,6 +17,7 @@ import urllib2
 from django.core.files import File
 from django.core.mail import send_mail
 from PIL import Image
+from itertools import chain
 
   #add imprt of content file wrapper
 from django.core.files.base import ContentFile
@@ -285,8 +286,15 @@ def searchUsers(request):
     userResults=User.objects.filter(username=searchString)
     if(len(userResults)>0):
         userName=User.get_username(userResults[0])
-        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public")[:10]
-        return render_to_response("DisplaySearchUser.html",{'userResult':userResults,'publicBoards':publicBoards,'userName':userName})
+        publicBoards = Boards.objects.order_by('Name').filter(Privacy="Public",username=searchString)
+        otherBoards = Boards.objects.order_by('Name').filter(Privacy="Private",username=searchString)
+        visibleBoards = []
+        for board in otherBoards:
+            visibleTo = board.VisibleToUsers
+            if str(get_user(request)) in visibleTo:
+                visibleBoards.append(board)
+        resultBoards = list(chain(publicBoards,visibleBoards))
+        return render_to_response("DisplaySearchUser.html",{'userResult':userResults,'publicBoards':resultBoards,'userName':userName})
 
 @csrf_exempt
 def autocompleteModel(request):
@@ -329,7 +337,7 @@ def searchBoards(request):
         searchString=""
         return render_to_response("PrivateBoardAccess.html")
     else:
-        tackNames = board.Tacks
+        tackNames = board[0].Tacks
         tacks = TackImages.objects.filter(Filename__in=tackNames)
         if not tacks:
             tacks = ""

@@ -15,7 +15,7 @@
 </head>
 <body>
 <div class="ui inverted tiered menu">
-        <div class="left menu">
+    <div class="left menu">
         <div class="item">
             <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
         </div>
@@ -46,7 +46,7 @@
 </div>
 
 <div>
-<a href="/FollowUser?userName={{ userName }}"  rel="shadowbox" class="rounded ui image" style="float: right;">Follow user</a>
+    <a href="/FollowUser?userName={{ userName }}"  rel="shadowbox" class="rounded ui image" style="float: right;">Follow user</a>
 </div>
 
 
@@ -56,13 +56,15 @@
         <div class = "ui five column grid">
             {% for board in publicBoards %}
                 <div class="column">
-                    <div class="ui segment">
-                        <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
-                            <div class="image">
-                                <img class="rounded ui image" src="/static/images/board4.png"src="/static/images/board2.png" alt='No Image' width="200" height="200">
-                                <h2><span>{{ board.Name }}</span></h2>
-                            </div>
-                        </a>
+                    <div class="ui stacked segment">
+                        <div class="ui stacked segment">
+                            <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
+                                <div class="image">
+                                    <img class="rounded ui image" src="/static/images/board4.png"src="/static/images/board2.png" alt='No Image' width="200" height="200">
+                                    <h2><span>{{ board.Name }}</span></h2>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
