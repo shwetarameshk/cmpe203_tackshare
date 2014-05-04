@@ -5,7 +5,9 @@
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
-
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
 
@@ -95,17 +97,17 @@
                 <a class="item" href="/update">Update Profile</a>
                 <a class="item" href="/manageemail">Email Management</a>
                 <a class="item">View Statistics<i class="dropdown icon"></i><div class="ui compact menu">
-                  <div class="ui simple dropdown item">
+                    <div class="ui simple dropdown item">
                         <div class="content">
                             <div class="name">You have:</div>
-{#                            <p class="description">{{ numBoards }} boards</p>#}
+                            {#                            <p class="description">{{ numBoards }} boards</p>#}
                             <p class="description">{{ numPublicBoards }} public board(s)</p>
                             <p class="description">{{ numPrivateBoards }} private board(s)</p>
                             <p class="description">{{ numTacks }} tacks</p>
                         </div>
-                  </div>
+                    </div>
                 </div></a>
-               <a class="item" href="/logout">Logout</a>
+                <a class="item" href="/logout">Logout</a>
             </div>
         </div>
         <div class="item">
@@ -120,33 +122,33 @@
         </div>
     </div>
 </div>
-<a href="/videoTest">click to test video</a>
-<a href="/sidebarTest">click to test sidebar</a><br><br>
-<div class="ui segment">
-    <div class="ui right demo sidebar">
-        <div id="searchUsers" class="ui form segment" >
-            <form action="/searchUsers" method="post" enctype="multipart/form-data">
-                <div style="display:inline;">
-                    <div class="ui label">Search Users:</div>
-                    <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
-                    </br>
-                    <input class="ui button blue" type="submit" name="submit" value="Search">
-                </div>
-            </form>
-        </div>
 
-        <div id="searchBoards" class="ui form segment" >
-            <form action="/searchBoards" method="post" enctype="multipart/form-data">
-                <div style="display:inline;">
-                    <div class="ui label">Search Boards:</div>
-                    <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
-                    </br>
-                    <input class="ui button blue" type="submit" name="submit" value="Search">
-                </div>
-            </form>
-        </div>
 
-        <div id="searchTags" class="ui form segment" >
+
+<div class="ui right demo sidebar">
+    <div id="searchUsers" class="ui form segment" >
+        <form action="/searchUsers" method="post" enctype="multipart/form-data">
+            <div style="display:inline;">
+                <div class="ui label">Search Users:</div>
+                <input type="text" autocomplete="off" name="search" id="txtSearch" style="width:250px;" onkeyup="searchOpen()" />
+                </br>
+                <input class="ui button blue" type="submit" name="submit" value="Search">
+            </div>
+        </form>
+    </div>
+
+    <div id="searchBoards" class="ui form segment" >
+        <form action="/searchBoards" method="post" enctype="multipart/form-data">
+            <div style="display:inline;">
+                <div class="ui label">Search Boards:</div>
+                <input type="text" autocomplete="off" name="search" id="txtBoardSearch" style="width:250px;" onkeyup="searchBoardOpen()" />
+                </br>
+                <input class="ui button blue" type="submit" name="submit" value="Search">
+            </div>
+        </form>
+    </div>
+
+    <div id="searchTags" class="ui form segment" >
             <form action="/searchTags" method="post" enctype="multipart/form-data">
                 <div style="display:inline;">
                     <div class="ui label">Search for Tacks by Tags:</div>
@@ -155,12 +157,14 @@
                     <input class="ui button blue" type="submit" name="submit" value="Search">
                 </div>
             </form>
-        </div>
-    </div></div>
+    </div>
+</div>
+
+
 
 
 <section class="container">
-    <div id="wrapper">
+    <div id="wrapper" style="width: 100%">
         <div class="ui large blue label">{% if yourBoards == "None" %}You have not created any boards! Create a board and get started!
         {% else %}Boards you created:</div>
             <div class = "ui five column grid">
@@ -192,21 +196,22 @@
             </div>
     </div>
 </section>
-<hr>
-<section>
-    <div id="wrapper">
+<section class="container">
+    <div id="wrapper"  style="width: 100%">
         <div class="ui large blue label">{% if otherBoards == "None" %}Follow a user to view more boards of your interest!
         {% else %}Boards you follow:</div>
             <div class = "ui five column grid">
             {% for board in otherBoards %}
                 <div class="column">
-                    <div class="ui segment">
-                        <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
-                            <div class="image">
-                                <img class="rounded ui image" src="/static/images/board4.png" alt='No Image' width="200" height="200">
-                                <h2><span>{{ board.Name }}</span></h2>
-                            </div>
-                        </a>
+                    <div class="ui stacked segment">
+                        <div class="ui stacked segment">
+                            <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
+                                <div class="image">
+                                    <img class="rounded ui image" src="/static/images/board4.png" alt='No Image' width="200" height="200">
+                                    <h2><span>{{ board.Name }}</span></h2>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endfor %}{% endif %}

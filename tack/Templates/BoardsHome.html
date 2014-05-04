@@ -16,6 +16,10 @@
         Shadowbox.init();
     </script>
 
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 </head>
 <body>
@@ -54,14 +58,14 @@
     </div>
 </div>
 <section class="container">
-    <div id="wrapper">
+    <div id="wrapper"  style="width: 100%">
         {% if  tacks == "" %}<div class="ui label">There are no tacks in this board! Add a tack!</div> {% endif %}
-        <div class = "ui five column grid">
+        <div class = "ui four column grid">
             <div class="column">
                 <div class="ui stacked segment">
                     <div class="ui stacked segment">
                         <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" style="text-decoration: none" >
-                            <div class="image">
+                            <div class="image" style="align-self: center">
                                 <i class="massive black add sign icon"></i>
                                 <div class="ui label">Create New Tack!</div>
                             </div>
