@@ -397,7 +397,7 @@ def autocompleteModel(request):
 
 
 @csrf_exempt
-def FollowUser(request):
+def followUser(request):
     """
     This method is used to display the Follow User form
     """
@@ -406,7 +406,7 @@ def FollowUser(request):
     return render_to_response("FollowUser.html",{'userName':userName})
 
 @csrf_exempt
-def AutoBoardComplete(request):
+def autoBoardComplete(request):
     """
     This method is used for processing the auto complete option for search boards.
     """
