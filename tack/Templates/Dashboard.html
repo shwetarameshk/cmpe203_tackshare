@@ -5,7 +5,9 @@
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style4.css" />
-
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/cupertino/jquery-ui.css" rel="stylesheet">
 
@@ -120,8 +122,7 @@
         </div>
     </div>
 </div>
-<a href="/videoTest">click to test video</a>
-<a href="/sidebarTest">click to test sidebar</a><br><br>
+
 <div class="ui segment">
     <div class="ui right demo sidebar">
         <div id="searchUsers" class="ui form segment" >
@@ -145,11 +146,12 @@
                 </div>
             </form>
         </div>
-    </div></div>
+    </div>
+</div>
 
 
 <section class="container">
-    <div id="wrapper">
+    <div id="wrapper" style="width: 100%">
         <div class="ui large blue label">{% if yourBoards == "None" %}You have not created any boards! Create a board and get started!
         {% else %}Boards you created:</div>
             <div class = "ui five column grid">
@@ -181,21 +183,22 @@
             </div>
     </div>
 </section>
-<hr>
-<section>
-    <div id="wrapper">
+<section class="container">
+    <div id="wrapper"  style="width: 100%">
         <div class="ui large blue label">{% if otherBoards == "None" %}Follow a user to view more boards of your interest!
         {% else %}Boards you follow:</div>
             <div class = "ui five column grid">
             {% for board in otherBoards %}
                 <div class="column">
-                    <div class="ui segment">
+                    <div class="ui stacked segment">
+                        <div class="ui stacked segment">
                         <a id="board_ref" href="/board?boardName={{ board.Name }}"  title={{ board.Name }}>
                             <div class="image">
                                 <img class="rounded ui image" src="/static/images/board4.png" alt='No Image' width="200" height="200">
                                 <h2><span>{{ board.Name }}</span></h2>
                             </div>
                         </a>
+                    </div>
                     </div>
                 </div>
             {% endfor %}{% endif %}
