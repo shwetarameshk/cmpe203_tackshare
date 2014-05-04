@@ -47,9 +47,9 @@
                             <i class="star icon"></i>
                         </a>
                         {% if tack.fileType == "image" %}
-                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
                         {% else %}
-                            <video width="200" height="200" controls>
+                            <video width="300" height="400" controls>
                                 <source src="{{ MEDIA_URL }}{{ tack.tackFile }}" type="video/webm">
                                 <source src="{{ MEDIA_URL }}{{ tack.tackFile }}" type="video/ogg">
                                 <source src="{{ MEDIA_URL }}{{ tack.tackFile }}" type="video/mp4">
@@ -60,17 +60,20 @@
 
                 </div>
                 <div class="ui top left attached blue label">{{ tack.Filename }}</div>
-
-                <div class="item">
-                    <i class="url icon"></i><a href="{{ tack.bookmark }}" style="text-decoration: none" target="_blank" class="detail">{{ tack.bookmark }}</a>
-                </div>
-                <div class="item">
-                    <i class="tags icon"></i>Tagged as: {{ tack.tags }}
-                </div>
-                <div class="item">
-                    <a class="item" href="#" id="edit_tack_link">
-                        <i class="edit icon"></i> Edit Tack
-                    </a>
+                <div class="ui items">
+                    <div class="item">
+                        <div class="content">
+                            <i class="url icon"></i>Visit <a href="{{ tack.bookmark }}" style="text-decoration: none" target="_blank" class="detail">{{ tack.bookmark }}</a>
+                        </div>
+                        <div class="content">
+                            <i class="tags icon"></i>Tagged as: {{ tack.tags }}
+                        </div>
+                        <div class="content">
+                            <a class="item" href="#" style="text-decoration: none" id="edit_tack_link">
+                                <i class="edit icon"></i> Edit Tack
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
