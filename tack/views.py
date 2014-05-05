@@ -117,7 +117,7 @@ def register(request):
 
 @login_required
 @csrf_exempt
-def createTack(request):
+def create_tack(request):
     """
     This method is used to display the Create Tack form
     """
@@ -126,7 +126,7 @@ def createTack(request):
 
 @login_required
 @csrf_exempt
-def createTackUrl(request):
+def create_tack_url(request):
     """
     This method is used to display the Create Tack from URL form
     """
@@ -148,7 +148,7 @@ def update_dashboard(request):
 
 @login_required
 @csrf_exempt
-def saveTack(request):
+def save_tack(request):
     """
     This method is used to save a new tack.
     """
@@ -189,7 +189,7 @@ def saveTack(request):
 
 @login_required
 @csrf_exempt
-def UrlsaveTack(request):
+def url_save_tack(request):
     """
     This method is used to save a new tack.
     """
@@ -232,7 +232,7 @@ def UrlsaveTack(request):
 
 @login_required
 @csrf_exempt
-def saveBoard(request):
+def save_board(request):
     """
     This method is used to create a new board
     """
@@ -251,11 +251,11 @@ def saveBoard(request):
 
 
 @login_required
-def createBoard(request):
+def create_board(request):
     return render_to_response("CreateBoard.html",{'user': str(get_user(request))})
 
 @login_required
-def showTacks(request):
+def show_tacks(request):
     """
     This method is used to display the tacks in a selected board.
     """
@@ -273,7 +273,7 @@ def showTacks(request):
     return render_to_response("BoardsHome.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':boardName,'sharedWith':sharedWith})
 
 @login_required
-def displayTack(request):
+def display_tack(request):
     """
     This method is used to display the details of a tack.
     """
@@ -289,7 +289,7 @@ def displayTack(request):
 
 
 @login_required
-def shareBoard(request):
+def share_board(request):
     """
     This method is used to display the Share Board form
     """
@@ -303,7 +303,7 @@ def shareBoard(request):
 
 @login_required
 @csrf_exempt
-def unShareBoard(request):
+def unshare_board(request):
     """
     This method is used to edit the list of users a board is shared with.
     """
@@ -317,7 +317,7 @@ def unShareBoard(request):
 
 @login_required
 @csrf_exempt
-def shareWithUser(request):
+def share_with_user(request):
     """
     This method is used to share a board with a user.
     """
@@ -331,7 +331,7 @@ def shareWithUser(request):
     return redirect("/board?boardName="+boardName)
 
 @login_required
-def manageemail(request):
+def manage_email(request):
     """
     This method is used to display the Email Management form
     """
@@ -341,7 +341,7 @@ def manageemail(request):
 
 @csrf_exempt
 @login_required
-def savesubscription(request):
+def save_subscription(request):
     """
     This method is used to save the user's email preferences.
     """
@@ -353,14 +353,14 @@ def savesubscription(request):
 
 @csrf_exempt
 @login_required
-def createTackInBoard(request):
+def create_tack_in_board(request):
     """
     This method is used to display the Create Tack inside Board form
     """
     return render_to_response("CreateTackInBoard.html",{'user': str(get_user(request)),'boardName':request.GET.get('boardName')})
 
 @csrf_exempt
-def searchUsers(request):
+def search_users(request):
     """
     This method is used to search for registered users.
     """
@@ -380,7 +380,7 @@ def searchUsers(request):
         return render_to_response("DisplaySearchUser.html",{'userResult':userResults,'publicBoards':resultBoards,'userName':userName})
 
 @csrf_exempt
-def autocompleteModel(request):
+def auto_complete_model(request):
     """
     This method is used for processing the auto complete option for search users.
     """
@@ -397,7 +397,7 @@ def autocompleteModel(request):
 
 
 @csrf_exempt
-def followUser(request):
+def follow_user(request):
     """
     This method is used to display the Follow User form
     """
@@ -406,7 +406,7 @@ def followUser(request):
     return render_to_response("FollowUser.html",{'userName':userName})
 
 @csrf_exempt
-def autoBoardComplete(request):
+def auto_board_complete(request):
     """
     This method is used for processing the auto complete option for search boards.
     """
@@ -421,7 +421,7 @@ def autoBoardComplete(request):
         return HttpResponse(json.dumps(results), content_type="application/json", status=200)
 
 @csrf_exempt
-def searchBoards(request):
+def search_boards(request):
     """
     This method is used to search for all public boards.
     """
@@ -439,7 +439,7 @@ def searchBoards(request):
         return render_to_response("DisplaySearchBoard.html",{'MEDIA_URL': settings.MEDIA_URL, 'tacks':tacks, 'boardName':searchString})
 
 @csrf_exempt
-def confirmFav(request):
+def confirm_fav(request):
     """
     This method is used to mark a tack as Favorite
     """
@@ -463,7 +463,7 @@ def confirmFav(request):
 
 @csrf_exempt
 @login_required
-def editTack(request):
+def edit_tack(request):
     """
     This method is used to edit/update a tack.
     """
@@ -505,7 +505,7 @@ def editTack(request):
 
 @login_required
 @csrf_exempt
-def editBoardPrivacy(request):
+def edit_board_privacy(request):
     """
     This method is used to display the Edit Board Privacy form.
     """
@@ -515,7 +515,7 @@ def editBoardPrivacy(request):
 
 @login_required
 @csrf_exempt
-def changeBoardPrivacy(request):
+def change_board_privacy(request):
     """
     This method is used to edit/update a board's privacy.
     """
@@ -527,7 +527,7 @@ def changeBoardPrivacy(request):
     return redirect("/board?boardName="+boardName)
 
 @csrf_exempt
-def viewFavorites(request):
+def view_favorites(request):
     """
     This method is used to display the user's favorite tacks.
     """
@@ -536,14 +536,14 @@ def viewFavorites(request):
         tacks=""
     return render_to_response("FavoritesHome.html",{'MEDIA_URL': settings.MEDIA_URL,'tacks':tacks})
 
-def displayInfoScreen(request):
+def display_info_screen(request):
     """
     This method is used to display the Information page.
     """
     return render_to_response("InfoScreen.html")
 
 @csrf_exempt
-def searchTags(request):
+def search_tags(request):
     """
     This method is used to search tacks by tags.
     """
