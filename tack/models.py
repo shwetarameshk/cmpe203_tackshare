@@ -54,3 +54,10 @@ class subscription(models.Model):
     follow = models.TextField()
     addtack = models.TextField()
     favorite = models.TextField()
+
+
+class Followers(models.Model):
+    """
+    This class contains the follower information
+    """
+    userName=models.TextField()

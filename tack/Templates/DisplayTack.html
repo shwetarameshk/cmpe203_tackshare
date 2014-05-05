@@ -34,6 +34,8 @@
                         </a>
                         {% if tack.fileType == "image" %}
                             <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
+                        {% elif tack.fileType == "fromurl" %}
+                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
                         {% else %}
                             <video width="300" height="400" controls>
                                 <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">

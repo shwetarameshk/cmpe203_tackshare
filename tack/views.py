@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import requests
-from tack.models import Users, TackImages, Boards, subscription
+from tack.models import Users, TackImages, Boards, subscription, Followers
 from django.db.models import Q
 from tackshare import settings
 from django.contrib.auth import get_user
@@ -196,39 +196,34 @@ def url_save_tack(request):
     if request.POST["new_board"]!="":
         boardname = request.POST["new_board"]
     else:
-        boardname = request.POST["ex_board"]
+        boardName = request.POST["ex_board"]
     img_url = request.POST["tack_url"]
     print img_url
     #content = ContentFile(urllib2.urlopen(img_url).read())
     #print content
     r = requests.get(img_url)
-
     img_temp = NamedTemporaryFile(delete=True)
     img_temp.write(r.content)
     img_temp.flush()
     parsed_uri=urlparse(img_url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
-    enteredTags=request.POST["tags"]
-    if not enteredTags:
-        tagArray=[]
-    else:
-        tagArray=[]
-        tagsSplit=enteredTags.split()
-        for ts in tagsSplit:
-            tagArray.append(ts)
     TackImages(Filename=request.POST["tack_name"],
-               image=File(img_temp),
-               tags=tagArray,
+               tackFile = File(img_temp),
+               fileType = "image",
+               tags=request.POST["tags"],
                username=get_user(request),
-               bookmark=domain,
-               board=boardname
+               bookmark=request.POST["tack_url"],
+               board=boardName
                ).save()
-    board = Boards.objects.get(Name=boardname,username=get_user(request))
+    board = Boards.objects.get(Name=boardName)
     tack_name = request.POST["tack_name"]
     board.Tacks.append(tack_name)
     board.save()
-    return redirect("/")
+    tackNames = board.Tacks
+    tacks = TackImages.objects.filter(Filename__in=tackNames)
+    return redirect("/board?boardName="+boardName)
+
 
 @login_required
 @csrf_exempt
@@ -402,8 +397,19 @@ def follow_user(request):
     This method is used to display the Follow User form
     """
     userName=request.GET.get('userName')
-    print userName
+    #print userName
     return render_to_response("FollowUser.html",{'userName':userName})
+
+
+@csrf_exempt
+def save_follow(request):
+    """
+    This method is used to save the follower
+    """
+    username=request.GET.get('userName')
+    print username
+    Followers(userName=username).save()
+    return render_to_response("FollowUser.html",{'userName':username})
 
 @csrf_exempt
 def auto_board_complete(request):
