@@ -164,7 +164,7 @@
 {#                                <i class="dropdown icon"></i>#}
 {#                                <div class="menu">#}
 {#                                    {% for board in boards %}#}
-{#                                        <div class="item" data-value="{{ board.Name }}">{{ board.Name }}</div>#}
+{#                                        <div class="item" data-value="{{ board.name }}">{{ board.name }}</div>#}
 {#                                    {% endfor %}#}
 {#                                </div>#}
 {#                            </div>#}
@@ -172,7 +172,7 @@
                                                         <select name="ex_board">
                                                             <option value=""></option>
                                                             {% for board in boards %}
-                                                                <option value="{{ board.Name }}">{{ board.Name }}</option>
+                                                                <option value="{{ board.name }}">{{ board.name }}</option>
                                                             {% endfor %}
                                                         </select><br>
                         </div>

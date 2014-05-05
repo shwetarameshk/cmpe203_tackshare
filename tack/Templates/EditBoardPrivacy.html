@@ -52,26 +52,26 @@
             <div id="wrapper">
                 <div id="updateBoard" class="ui form segment" >
                     <form action="/changeBoardPrivacy" method="post" enctype="multipart/form-data">
-{#                        {{ board.Name }}#}
+{#                        {{ board.name }}#}
                         <div class="field">
                             <label for="board_privacy">Board Visibility:</label><br>
                             <div class="grouped inline fields">
                                 <div class="field">
                                     <div class="ui radio checkbox">
-                                        <input id="private" type="radio" name="board_privacy" value="Private" {% if board.Privacy == 'Private' %} checked {% endif %}>
+                                        <input id="private" type="radio" name="board_privacy" value="Private" {% if board.privacy == 'Private' %} checked {% endif %}>
                                         <label for="private">Private</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="ui radio checkbox">
-                                        <input id="public" type="radio" name="board_privacy" value="Public" {% if board.Privacy == 'Public' %} checked {% endif %} >
+                                        <input id="public" type="radio" name="board_privacy" value="Public" {% if board.privacy == 'Public' %} checked {% endif %} >
                                         <label for="public">Public</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <input type="hidden" name="boardName" value="{{ board.Name }}">
+                        <input type="hidden" name="boardName" value="{{ board.name }}">
                         <input class="ui button blue" type="submit" name="submit" value="Update">
                     </form>
                 </div>

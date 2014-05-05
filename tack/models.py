@@ -7,48 +7,48 @@ class Users(models.Model):
     """
     This class contains fields for User related information
     """
-    Firstname = models.TextField()
-    Lastname = models.TextField()
-    Username = models.TextField()
-    Password = models.TextField()
-    Email = models.TextField()
+    first_name = models.TextField()
+    last_name = models.TextField()
+    username = models.TextField()
+    password = models.TextField()
+    email = models.TextField()
 
     def __unicode__(self):
-        return self.Username
+        return self.username
 
 class TackImages(models.Model):
     """
     This class contains fields for Tacks related information
     """
-    Filename = models.TextField()
-    tackFile = models.FileField(upload_to="tackFiles")
-    fileType = models.TextField()
+    file_name = models.TextField()
+    tack_file = models.FileField(upload_to="tackFiles")
+    file_type = models.TextField()
     tags = ListField()
     bookmark = models.URLField()
     username = models.TextField()
     board = models.TextField()
-    isFavorite=models.BooleanField()
+    is_favorite=models.BooleanField()
 
     def __unicode__(self):
-        return self.Filename
+        return self.file_name
 
 class Boards(models.Model):
     """
     This class contains fields for Boards related information
     """
-    Name = models.TextField()
-    Description = models.TextField()
-    Privacy = models.TextField()
+    name = models.TextField()
+    description = models.TextField()
+    privacy = models.TextField()
     username = models.TextField()
-    VisibleToUsers = ListField()
-    Tacks = ListField()
+    visible_to_users = ListField()
+    tacks = ListField()
 
     def __unicode__(self):
-        return self.Name
+        return self.name
 
 class subscription(models.Model):
     """
-    This class contains fields for Email Subscription related information
+    This class contains fields for email Subscription related information
     """
     username=models.TextField()
     follow = models.TextField()

@@ -63,20 +63,20 @@
         {% for tack in tacks %}
             <div class="column">
                 <div class="ui segment">
-                    <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
-                        {% if tack.fileType == "image" %}
-                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
-                        {% elif tack.fileType == "fromurl" %}
-                                    <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                    <a href="/displayTack?tackName={{ tack.file_name }}"  rel="shadowbox" class="rounded ui image" title={{ tack.file_name }}>
+                        {% if tack.file_type == "image" %}
+                            <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
+                        {% elif tack.file_type == "fromurl" %}
+                                    <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
                         {% else %}
                             <video width="200" height="200" controls>
-                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">
-                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/ogg">
-                                <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/mp4">
+                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/webm">
+                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/ogg">
+                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         {% endif %}
-                        {% if tack.isFavorite %}
+                        {% if tack.is_favorite %}
                             <a class="ui right blue corner label item" style="text-decoration:none;">
                                 <i class="star icon"></i>
                             </a>
