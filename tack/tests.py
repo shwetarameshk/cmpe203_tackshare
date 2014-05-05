@@ -10,3 +10,6 @@ class BoardTestCase(TestCase):
     def test_board_privacy(self):
         b1 = Boards.objects.get(Name='B1')
         self.assertEqual(b1.Privacy, 'Public')
+
+
+

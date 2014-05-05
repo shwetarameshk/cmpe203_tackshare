@@ -53,23 +53,13 @@
 </div>
 <section class="container">
     <div id="wrapper">
-        {% if  tacks == "" %}
-            <div class="ui label">There are no tacks in this board!{% endif %}</div>
         <div class="ui blue label">{{ boardName }}</div>
+        {% if  tacks == "" %}
+        <div class="ui label">There are no tacks in this board!{% endif %}</div>
+
 
         <div class = "ui five column grid">
-            <div class="column">
-                <div class="ui stacked segment">
-                    <div class="ui stacked segment">
-                        <a id="board_ref" href="/createTackInBoard?boardName={{ boardName }}" style="text-decoration: none" >
-                            <div class="image">
-                                <i class="massive black add sign icon"></i>
-                                <div class="ui label">Create New Tack!</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
+
 
             {% for tack in tacks %}
                 <div class="column">
@@ -77,6 +67,8 @@
                         <div class="ui stacked segment">
                             <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
                                 {% if tack.fileType == "image" %}
+                                    <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                                {% elif tack.fileType == "fromurl" %}
                                     <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
                                 {% else %}
                                     <video width="200" height="200" controls>

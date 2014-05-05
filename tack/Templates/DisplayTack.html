@@ -34,6 +34,8 @@
                         </a>
                         {% if tack.fileType == "image" %}
                             <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
+                        {% elif tack.fileType == "fromurl" %}
+                            <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
                         {% else %}
                             <video width="300" height="400" controls>
                                 <source src="{{ MEDIA_URL }}{{tack.tackFile}}" type="video/webm">
@@ -48,6 +50,8 @@
                         </a>
                         {% if tack.fileType == "image" %}
                             <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="400" height="400" title={{ tack.Filename }}/>
+                        {% elif tack.fileType == "fromurl" %}
+                                    <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
                         {% else %}
                             <video width="300" height="400" controls>
                                 <source src="{{ MEDIA_URL }}{{ tack.tackFile }}" type="video/webm">
@@ -66,7 +70,7 @@
                             <i class="url icon"></i>Visit <a href="{{ tack.bookmark }}" style="text-decoration: none" target="_blank" class="detail">{{ tack.bookmark }}</a>
                         </div>
                         <div class="content">
-                            <i class="tags icon"></i>Tagged as: {{ tack.tags }}
+                            <i class="tags icon"></i>Tagged as: {{ tags }}
                         </div>
                         <div class="content">
                             <a class="item" href="#" style="text-decoration: none" id="edit_tack_link">

@@ -80,6 +80,8 @@
                             <a href="/displayTack?tackName={{ tack.Filename }}"  rel="shadowbox" class="rounded ui image" title={{ tack.Filename }}>
                                 {% if tack.fileType == "image" %}
                                     <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
+                                {% elif tack.fileType == "fromurl" %}
+                                    <img src="{{ MEDIA_URL }}{{ tack.tackFile }}" alt='No Image' width="200" height="200" title={{ tack.Filename }}/>
                                 {% else %}
                                     <video width="200" height="200"  controls> {# poster="{{ MEDIA_URL }}VideoLogo.jpg"  #}
                                         <source src="{{ MEDIA_URL }}{{ tack.tackFile }}" type="video/webm">
