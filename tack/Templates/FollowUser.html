@@ -23,12 +23,11 @@
                 <div class="ui top center attached blue label" style="align-content: center">Follow {{ userName }} ?
                 </div>
                 <br> <br><br>
-
-                 <div class="ui blue button center">
-                    <a href="/SaveFollow?userName=y">
-                        Confirm
-                    </a>
+                <form action="/SaveFollow?userName={{ userName }}" method="post" >
+                 <div >
+                    <input class="ui blue button center" type="submit" value="Follow">
                  </div>
+                    </form>
              </div>
 
         </div>

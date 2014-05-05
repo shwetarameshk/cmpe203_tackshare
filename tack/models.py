@@ -61,3 +61,7 @@ class Followers(models.Model):
     This class contains the follower information
     """
     userName=models.TextField()
+    followersList=ListField()
+
+    def __unicode__(self):
+        return self.userName

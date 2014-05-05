@@ -31,17 +31,43 @@ def home(request):
     """
     if request.user.is_authenticated():
         whoami = get_user(request)
+        print whoami
         yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
         if not yourBoards:
             yourBoards = "None"
-        otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
+        followersBoard=[]
+        follower = []
+        try:
+            followers = Followers.objects.filter(userName=whoami)
+            #follow=followers.followersList
+
+            follow=followers.values()
+            test2=[]
+            print follow
+            for follower1 in follow:
+                followe=follower1.values()
+                print followe.pop()
+                test=followe.pop()
+                test1="".join(test)
+                test2.append(test)
+            for name in test2:
+                followersBoard.append(Boards.objects.order_by('Name').filter(username=test1))
+            otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
+            try:
+                print followersBoard[0]
+                otherBoards=followersBoard[0]
+            except:
+                print "sorry"
+        except:
+            print "very sorry"
         visibleBoards = []
         for board in otherBoards:
-            visibleTo = board.VisibleToUsers
-            if str(whoami) in visibleTo:
-                visibleBoards.append(board)
+            #visibleTo = board.VisibleToUsers
+            #if str(whoami) in visibleTo:
+            visibleBoards.append(board)
         if not visibleBoards:
             visibleBoards = "None"
+        print visibleBoards
         numBoards = Boards.objects.filter(username=whoami).count()
         numPublicBoards = Boards.objects.filter(username=whoami,Privacy='Public').count()
         numPrivateBoards = Boards.objects.filter(username=whoami,Privacy='Private').count()
@@ -408,13 +434,23 @@ def save_follow(request):
     """
     username=request.GET.get('userName')
     print username
-    Followers(userName=username).save()
+    try:
+        user=Followers.objects.get(userName=username)
+        user.followersList.append(username)
+        user.save()
+    except:
+        Followers(userName= get_user(request), followersList=username).save()
+
+    print "saved!"
+    #except:
+    #    Followers(userName= get_user(request), followersList=username).save()
+    #    print "in except"
     return render_to_response("FollowUser.html",{'userName':username})
 
 @csrf_exempt
 def auto_board_complete(request):
     """
-    This method is used for processing the auto complete option for search boards.
+    This method  is used for processing the auto complete option for search boards.
     """
     if request.is_ajax():
         searchString=request.POST["search"]
