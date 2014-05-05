@@ -35,31 +35,36 @@ def home(request):
         yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
         if not yourBoards:
             yourBoards = "None"
+        #To get all the followers
         followersBoard=[]
         follower = []
         try:
             followers = Followers.objects.filter(userName=whoami)
-            #follow=followers.followersList
-
             follow=followers.values()
             test2=[]
-            print follow
+            #print follow
+            #Iterate over the list values
             for follower1 in follow:
                 followe=follower1.values()
                 print followe.pop()
                 test=followe.pop()
                 test1="".join(test)
+                #Add the obtained values into the collection
                 test2.append(test)
+            #iterate over the obtained collection
             for name in test2:
+                #Add the boards of all the fllowers into a collection
                 followersBoard.append(Boards.objects.order_by('Name').filter(username=test1))
             otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
             try:
+                #Preventing repetitive display by getting the first collection
                 print followersBoard[0]
+                #If there are no followers, all public boards will be displayed
                 otherBoards=followersBoard[0]
             except:
-                print "sorry"
+                print "Caught an exception in retrieving the boards of followers"
         except:
-            print "very sorry"
+            print "Caught exception in getting the followers"
         visibleBoards = []
         for board in otherBoards:
             #visibleTo = board.VisibleToUsers
@@ -420,21 +425,20 @@ def auto_complete_model(request):
 @csrf_exempt
 def follow_user(request):
     """
-    This method is used to display the Follow User form
+    This method is used to display the Follow User form and check if he/she is followed already
     """
     username=request.GET.get('userName')
-    print username
+    #print username
+    #local variable declarations
     followersBoard=[]
     follower = []
     flag=False
     test2=[]
     vcount=0
     try:
+        #getting the followers
         followers = Followers.objects.filter(userName=get_user(request))
         follow=followers.values()
-        print follow
-        print followers
-        print "kl"
         if not follow:
             flag=True
         for follower1 in follow:
@@ -447,12 +451,14 @@ def follow_user(request):
             test2.append(test)
         for name in test2:
             for inner in name:
+                #Flagging if the follower already exists
                 if username in inner:
                     flag=True
                     vcount=vcount+1
     except:
         print "very sorry"
     print vcount
+    #Check if already followed
     if vcount==0:
         print "Follow"
         flag=True
@@ -465,20 +471,23 @@ def follow_user(request):
 @csrf_exempt
 def save_follow(request):
     """
-    This method is used to save the follower
+    This method is used to save the follower if not already exists and remove the follower if already exists
     """
+    #Get the person to follow
     username=request.GET.get('userName')
-    print username
+    #print username
+    #Get the username of the current user
     mainuser=get_user(request)
+    #Local variable declarations
     followersBoard=[]
     follower = []
     flag=False
     vcount=0
     try:
+        #Getting the list of followers
         followers = Followers.objects.filter(userName=get_user(request))
         follow=followers.values()
         test2=[]
-        print follow
         if not follow:
             flag=True
         for follower1 in follow:
@@ -488,27 +497,29 @@ def save_follow(request):
             if not test:
                 flag=True
             test1="".join(test)
+            #Checking for duplication and adding to collection
             if test not in test2:
                 test2.append(test)
+        #Logic to check if already following or not
         mylist=[]
         for name in test2:
             for inner in name:
-                print inner
                 if username in inner:
-                    print username+"-"+inner
                     vcount=vcount+1
+                    #Getting the list of followers
                     user=Followers.objects.filter(userName=mainuser)
-                    print user
+                    #Removing a user if already exists in the followers list
                     for u in user:
                         try:
                             u.followersList.remove(inner)
                             u.save()
                         except:
-                            print "bye"
+                            print "Exception caught in removing the follower"
     except:
-        print "very sorry"
+        print "Exception caught in getting the followers"
     print "out"
     print vcount
+    #Add the follower to the follower list if not already exists
     if vcount==0:
         try:
             user=Followers.objects.get(userName=mainuser)

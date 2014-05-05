@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <script type="text/javascript">
+        //Function to check whether the user being browsed is already followed or not
         function Check()
         {
             var checker="{{ flag }}";
@@ -25,19 +26,17 @@
                 document.getElementById('maintext').innerHTML="Unfollow {{ userName }}"
                 document.getElementById('follow').value="UnFollow";
             }
+            //Code to close the Shadowbox on getting the response
             var v="{{ Done }}";
             if(v)
             {
                 window.parent.Shadowbox.close();
             }
         }
+        //Function to submit the form
         function execute()
         {
             document.sender.submit();
-            //window.parent.Shadowbox.close();
-            //window.parent.location.href="/";
-
-
         }
     </script>
 
