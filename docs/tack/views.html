@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>views.py</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>views.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">asyncore</span> <span class="kn">import</span> <span class="n">write</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.core.files.temp</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render_to_response</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tack.models</span> <span class="kn">import</span> <span class="n">Users</span><span class="p">,</span> <span class="n">TackImages</span><span class="p">,</span> <span class="n">Boards</span><span class="p">,</span> <span class="n">subscription</span><span class="p">,</span> <span class="n">Followers</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">tackshare</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">login</span><span class="p">,</span> <span class="n">logout</span>
+<span class="kn">from</span> <span class="nn">urlparse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">from</span> <span class="nn">django.core.files</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">django.core.files.base</span> <span class="kn">import</span> <span class="n">ContentFile</span>
+<span class="kn">import</span> <span class="nn">connect</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Create your views here.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>This method is used to display the user's dashboard. Dashboard contains all the boards created by the user and the boards shared with the user.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
+        <span class="n">whoami</span> <span class="o">=</span> <span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">whoami</span>
+        <span class="n">yourBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">whoami</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">yourBoards</span><span class="p">:</span>
+            <span class="n">yourBoards</span> <span class="o">=</span> <span class="s">&quot;None&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>To get all the followers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">followersBoard</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">boardDisplay</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">follower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">followers</span> <span class="o">=</span> <span class="n">Followers</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span><span class="n">whoami</span><span class="p">)</span>
+            <span class="n">follow</span><span class="o">=</span><span class="n">followers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="n">test2</span><span class="o">=</span><span class="p">[]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Iterate over the list values</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">for</span> <span class="n">follower1</span> <span class="ow">in</span> <span class="n">follow</span><span class="p">:</span>
+                <span class="n">followe</span><span class="o">=</span><span class="n">follower1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">print</span> <span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">test</span><span class="o">=</span><span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">test1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Add the obtained values into the collection</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="n">test2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>iterate over the obtained collection</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">test2</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Add the boards of all the followers into a collection</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="n">followersBoard</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">test1</span><span class="p">))</span>
+            <span class="n">otherBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">~</span><span class="n">Q</span><span class="p">(</span><span class="n">username</span> <span class="o">=</span> <span class="n">whoami</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Preventing repetitive display by getting the first collection</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="k">print</span> <span class="n">followersBoard</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">boardDisplay</span> <span class="o">=</span> <span class="n">followersBoard</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Caught an exception in retrieving the boards of followers&quot;</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Caught exception in getting the followers&quot;</span>
+        <span class="n">visibleFavoriteBoards</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">board</span> <span class="ow">in</span> <span class="n">boardDisplay</span><span class="p">:</span>
+            <span class="n">visibleTo</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">whoami</span><span class="p">)</span> <span class="ow">in</span> <span class="n">visibleTo</span><span class="p">:</span>
+                <span class="n">visibleFavoriteBoards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">visibleFavoriteBoards</span><span class="p">:</span>
+            <span class="n">visibleFavoriteBoards</span> <span class="o">=</span> <span class="s">&quot;None&quot;</span>
+        <span class="k">print</span> <span class="n">visibleFavoriteBoards</span>
+
+        <span class="n">visibleBoards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">board</span> <span class="ow">in</span> <span class="n">otherBoards</span><span class="p">:</span>
+            <span class="n">visibleTo</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">whoami</span><span class="p">)</span> <span class="ow">in</span> <span class="n">visibleTo</span><span class="p">:</span>
+                <span class="n">visibleBoards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">visibleBoards</span><span class="p">:</span>
+            <span class="n">visibleBoards</span> <span class="o">=</span> <span class="s">&quot;None&quot;</span>
+        <span class="k">print</span> <span class="n">visibleBoards</span>
+        <span class="n">numPublicBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">whoami</span><span class="p">,</span><span class="n">privacy</span><span class="o">=</span><span class="s">&#39;Public&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">numPrivateBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">whoami</span><span class="p">,</span><span class="n">privacy</span><span class="o">=</span><span class="s">&#39;Private&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">numTacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">whoami</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;Dashboard.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span><span class="s">&#39;yourBoards&#39;</span><span class="p">:</span><span class="n">yourBoards</span><span class="p">,</span>
+                                                     <span class="s">&#39;otherBoards&#39;</span><span class="p">:</span><span class="n">visibleBoards</span><span class="p">,</span>
+                                                    <span class="s">&#39;numPublicBoards&#39;</span><span class="p">:</span><span class="n">numPublicBoards</span><span class="p">,</span>
+                                                    <span class="s">&#39;numPrivateBoards&#39;</span><span class="p">:</span><span class="n">numPrivateBoards</span><span class="p">,</span>
+                                                    <span class="s">&#39;numTacks&#39;</span><span class="p">:</span><span class="n">numTacks</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;Home.html&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>This method is used to log out the user from the current session.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">logout_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;Home.html&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>This method is used to update the user's profile.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">update_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;updateprofile.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;firstname&#39;</span><span class="p">:</span><span class="n">User</span><span class="o">.</span><span class="n">get_full_name</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">),</span><span class="s">&#39;username&#39;</span><span class="p">:</span><span class="n">User</span><span class="o">.</span><span class="n">get_username</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>This method is used to update the user's password.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">update_user_profile</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;passwordAgain&quot;</span><span class="p">]:</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">username__exact</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)))</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">])</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;updateprofile.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;firstname&#39;</span><span class="p">:</span><span class="n">User</span><span class="o">.</span><span class="n">get_full_name</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">),</span><span class="s">&#39;username&#39;</span><span class="p">:</span><span class="n">User</span><span class="o">.</span><span class="n">get_username</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">),</span><span class="s">&#39;status&#39;</span><span class="p">:</span><span class="s">&quot;password didn&#39;t match&quot;</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>This method is for user's login and authentication</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;username&quot;</span><span class="p">],</span> <span class="n">password</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;Home.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&quot;Invalid Username or password&quot;</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>This method is used to register a new user.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;passwordAgain&quot;</span><span class="p">]:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;username&quot;</span><span class="p">],</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;email&quot;</span><span class="p">],</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">])</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">first_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;firstname&quot;</span><span class="p">]</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">last_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;lastname&quot;</span><span class="p">]</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">subscription</span><span class="p">(</span><span class="n">username</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;username&quot;</span><span class="p">],</span>
+                       <span class="n">follow</span> <span class="o">=</span> <span class="s">&#39;on&#39;</span><span class="p">,</span>
+                       <span class="n">addtack</span> <span class="o">=</span> <span class="s">&#39;on&#39;</span><span class="p">,</span>
+                       <span class="n">favorite</span> <span class="o">=</span> <span class="s">&#39;on&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">send_mail</span><span class="p">(</span><span class="s">&quot;registered&quot;</span><span class="p">,</span><span class="s">&quot;Dude!! Welcome to the Fun World. Login to your account http://www.tackshare.com&quot;</span><span class="p">,</span><span class="s">&quot;tackshare@gmail.com&quot;</span><span class="p">,[</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;email&quot;</span><span class="p">]],</span><span class="n">fail_silently</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;Home.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;username&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;!! Registered Successfully! Please Login&quot;</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;Home.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;Your passwords didn</span><span class="se">\&#39;</span><span class="s">t match&#39;</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>This method is used to display the Create Tack form</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">create_tack</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;CreateTack.html&quot;</span><span class="p">,{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)),</span><span class="s">&#39;boards&#39;</span><span class="p">:</span><span class="n">boards</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p>This method is used to display the Create Tack from URL form</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">create_tack_url</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;CreatetackFromUrl.html&quot;</span><span class="p">,{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)),</span><span class="s">&#39;boards&#39;</span><span class="p">:</span><span class="n">boards</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>This method is used to save a new board.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">update_dashboard</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">Boards</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_name&quot;</span><span class="p">],</span>
+           <span class="n">description</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_desc&quot;</span><span class="p">],</span>
+           <span class="n">privacy</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_privacy&quot;</span><span class="p">],</span>
+           <span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">),</span>
+           <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>This method is used to save a new tack.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">save_tack</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;new_board&quot;</span><span class="p">]</span><span class="o">!=</span><span class="s">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;new_board&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;ex_board&quot;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">])</span>
+        <span class="n">tackFileType</span> <span class="o">=</span> <span class="s">&quot;image&quot;</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">tackFileType</span> <span class="o">=</span> <span class="s">&quot;not image&quot;</span>
+    <span class="n">enteredTags</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tags&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">enteredTags</span><span class="p">:</span>
+        <span class="n">tagArray</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tagArray</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">tagsSplit</span><span class="o">=</span><span class="n">enteredTags</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">print</span> <span class="n">tagsSplit</span>
+        <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">tagsSplit</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">ts</span>
+            <span class="n">tagArray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ts</span><span class="p">))</span>
+        <span class="k">print</span> <span class="n">tagArray</span>
+        <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">tagArray</span><span class="p">)</span>
+    <span class="n">TackImages</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_name&quot;</span><span class="p">],</span>
+               <span class="n">tack_file</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">],</span>
+               <span class="n">file_type</span> <span class="o">=</span> <span class="n">tackFileType</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>tags=request.POST["tags"],</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>               <span class="n">tags</span><span class="o">=</span><span class="n">tagArray</span><span class="p">,</span>
+               <span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">),</span>
+               <span class="n">bookmark</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_url&quot;</span><span class="p">],</span>
+               <span class="n">board</span><span class="o">=</span><span class="n">boardName</span>
+               <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">tack_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_name&quot;</span><span class="p">]</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">tacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tack_name</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">tackNames</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">tacks</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name__in</span><span class="o">=</span><span class="n">tackNames</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/board?boardName=&quot;</span><span class="o">+</span><span class="n">boardName</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>This method is used to save a new tack.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">url_save_tack</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;new_board&quot;</span><span class="p">]</span><span class="o">!=</span><span class="s">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">boardname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;new_board&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;ex_board&quot;</span><span class="p">]</span>
+    <span class="n">img_url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_url&quot;</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">img_url</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
+    <span class="n">img_temp</span> <span class="o">=</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">img_temp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">img_temp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">parsed_uri</span><span class="o">=</span><span class="n">urlparse</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="s">&#39;{uri.scheme}://{uri.netloc}/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">parsed_uri</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">domain</span>
+    <span class="n">TackImages</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_name&quot;</span><span class="p">],</span>
+               <span class="n">tack_file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">img_temp</span><span class="p">),</span>
+               <span class="n">file_type</span> <span class="o">=</span> <span class="s">&quot;image&quot;</span><span class="p">,</span>
+               <span class="n">tags</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tags&quot;</span><span class="p">],</span>
+               <span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">),</span>
+               <span class="n">bookmark</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_url&quot;</span><span class="p">],</span>
+               <span class="n">board</span><span class="o">=</span><span class="n">boardName</span>
+               <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">tack_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_name&quot;</span><span class="p">]</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">tacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tack_name</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">tackNames</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">tacks</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name__in</span><span class="o">=</span><span class="n">tackNames</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/board?boardName=&quot;</span><span class="o">+</span><span class="n">boardName</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>This method is used to create a new board</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">save_board</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">response_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">response_data</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;failure&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Boards</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_name&quot;</span><span class="p">],</span>
+                   <span class="n">description</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_desc&quot;</span><span class="p">],</span>
+                   <span class="n">privacy</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_privacy&quot;</span><span class="p">],</span>
+                   <span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">),</span>
+                   <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">response_data</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;success&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">response_data</span><span class="p">[</span><span class="s">&#39;result&#39;</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;failure&quot;</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response_data</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s">&quot;application/json&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>This method is used to display the tacks in a selected board.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">create_board</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;CreateBoard.html&quot;</span><span class="p">,{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))})</span>
+
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">show_tacks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;boardName&#39;</span><span class="p">)</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">tackNames</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">tacks</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span><span class="p">:</span>
+        <span class="n">sharedWith</span><span class="o">=</span><span class="s">&quot;none&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sharedWith</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name__in</span><span class="o">=</span><span class="n">tackNames</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tacks</span><span class="p">:</span>
+        <span class="n">tacks</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;BoardsHome.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span> <span class="s">&#39;tacks&#39;</span><span class="p">:</span><span class="n">tacks</span><span class="p">,</span> <span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">boardName</span><span class="p">,</span><span class="s">&#39;sharedWith&#39;</span><span class="p">:</span><span class="n">sharedWith</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <p>This method is used to display the details of a tack.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">display_tack</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">tackName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tackName&#39;</span><span class="p">)</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">tackName</span><span class="p">)</span>
+    <span class="n">tack</span> <span class="o">=</span> <span class="n">tacks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">boards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tack</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">tack</span><span class="o">.</span><span class="n">tags</span>
+    <span class="k">print</span> <span class="n">tags</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;DisplayTack.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span> <span class="s">&#39;tack&#39;</span><span class="p">:</span><span class="n">tack</span><span class="p">,</span> <span class="s">&#39;boards&#39;</span> <span class="p">:</span> <span class="n">boards</span><span class="p">,</span> <span class="s">&#39;tags&#39;</span> <span class="p">:</span> <span class="n">tags</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <p>This method is used to display the Share Board form</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">share_board</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;boardName&#39;</span><span class="p">)</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span><span class="p">:</span>
+        <span class="n">sharedWith</span><span class="o">=</span><span class="s">&quot;none&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sharedWith</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;ShareBoard.html&quot;</span><span class="p">,{</span><span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">boardName</span><span class="p">,</span><span class="s">&#39;sharedWith&#39;</span><span class="p">:</span><span class="n">sharedWith</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <p>This method is used to edit the list of users a board is shared with.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">unshare_board</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;boardName&#39;</span><span class="p">)</span>
+    <span class="n">userName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;userName&#39;</span><span class="p">)</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">userName</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">sharedWith</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;ShareBoard.html&quot;</span><span class="p">,{</span><span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">boardName</span><span class="p">,</span><span class="s">&#39;sharedWith&#39;</span><span class="p">:</span><span class="n">sharedWith</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      <p>This method is used to share a board with a user.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">share_with_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">shareWith</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;search&#39;</span><span class="p">]</span>
+    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;boardName&#39;</span><span class="p">]</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shareWith</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">tackNames</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">tacks</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name__in</span><span class="o">=</span><span class="n">tackNames</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/board?boardName=&quot;</span><span class="o">+</span><span class="n">boardName</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>This method is used to display the Email Management form</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">manage_email</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">subsc</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+    <span class="k">print</span> <span class="n">subsc</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;ManageEmail.html&quot;</span><span class="p">,{</span><span class="s">&#39;subscriptions&#39;</span><span class="p">:</span><span class="n">subsc</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <p>This method is used to save the user's email preferences.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">save_subscription</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">subsc</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span> <span class="o">=</span> <span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">follow</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;onoffswitch1&#39;</span><span class="p">],</span>
+        <span class="n">addtack</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;onoffswitch2&#39;</span><span class="p">],</span>
+        <span class="n">favorite</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;onoffswitch3&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      <p>This method is used to display the Create Tack inside Board form</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">create_tack_in_board</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;CreateTackInBoard.html&quot;</span><span class="p">,{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)),</span><span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;boardName&#39;</span><span class="p">)})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <p>This method is used to search for registered users.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">search_users</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">searchString</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;search&quot;</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">searchString</span>
+    <span class="n">userResults</span><span class="o">=</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">userResults</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">userName</span><span class="o">=</span><span class="n">User</span><span class="o">.</span><span class="n">get_username</span><span class="p">(</span><span class="n">userResults</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">publicBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">privacy</span><span class="o">=</span><span class="s">&quot;Public&quot;</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span>
+        <span class="n">otherBoards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">privacy</span><span class="o">=</span><span class="s">&quot;Private&quot;</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span>
+        <span class="n">visibleBoards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">board</span> <span class="ow">in</span> <span class="n">otherBoards</span><span class="p">:</span>
+            <span class="n">visibleTo</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">visible_to_users</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span> <span class="ow">in</span> <span class="n">visibleTo</span><span class="p">:</span>
+                <span class="n">visibleBoards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+        <span class="n">resultBoards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">publicBoards</span><span class="p">,</span><span class="n">visibleBoards</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;DisplaySearchUser.html&quot;</span><span class="p">,{</span><span class="s">&#39;userResult&#39;</span><span class="p">:</span><span class="n">userResults</span><span class="p">,</span><span class="s">&#39;publicBoards&#39;</span><span class="p">:</span><span class="n">resultBoards</span><span class="p">,</span><span class="s">&#39;userName&#39;</span><span class="p">:</span><span class="n">userName</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <p>This method is used for processing the auto complete option for search users.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">auto_complete_model</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-52'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-52'>#</a>
+      </div>
+      <p>search_qs = User.objects.filter(username__startswith=request.REQUEST['search'])</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_ajax</span><span class="p">():</span>
+        <span class="n">searchString</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;search&quot;</span><span class="p">]</span>
+        <span class="n">search_qs</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username__startswith</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">search_qs</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">search_qs</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s">&quot;application/json&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-53'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-53'>#</a>
+      </div>
+      <p>This method is used to display the Follow User form  and check if he/she is followed already</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">follow_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-54'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-54'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;userName&#39;</span><span class="p">)</span>
+    <span class="n">followersBoard</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">follower</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">flag</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">test2</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">vcount</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-55'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-55'>#</a>
+      </div>
+      <p>getting the followers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">followers</span> <span class="o">=</span> <span class="n">Followers</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+        <span class="n">follow</span><span class="o">=</span><span class="n">followers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">follow</span><span class="p">:</span>
+            <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+        <span class="k">for</span> <span class="n">follower1</span> <span class="ow">in</span> <span class="n">follow</span><span class="p">:</span>
+            <span class="n">followe</span><span class="o">=</span><span class="n">follower1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">print</span> <span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">test</span><span class="o">=</span><span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">test</span><span class="o">==</span><span class="p">[]:</span>
+                <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+            <span class="n">test1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+            <span class="n">test2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">test2</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-56'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-56'>#</a>
+      </div>
+      <p>Flagging if the follower already exists</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="k">if</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">inner</span><span class="p">:</span>
+                    <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+                    <span class="n">vcount</span><span class="o">=</span><span class="n">vcount</span><span class="o">+</span><span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;very sorry&quot;</span>
+    <span class="k">print</span> <span class="n">vcount</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      <p>Check if already followed</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">vcount</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Follow&quot;</span>
+        <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Unfollow&quot;</span>
+        <span class="n">flag</span><span class="o">=</span><span class="bp">False</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;FollowUser.html&quot;</span><span class="p">,{</span><span class="s">&#39;userName&#39;</span><span class="p">:</span><span class="n">username</span><span class="p">,</span><span class="s">&#39;flag&#39;</span><span class="p">:</span><span class="n">flag</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-58'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-58'>#</a>
+      </div>
+      <p>This method is used to save the follower if not already exists and remove the follower if already exists</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">save_follow</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-59'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-59'>#</a>
+      </div>
+      <p>Get the person to follow</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;userName&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-60'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-60'>#</a>
+      </div>
+      <p>print username
+Get the username of the current user</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">mainuser</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-61'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-61'>#</a>
+      </div>
+      <p>Local variable declarations</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">followersBoard</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">follower</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">flag</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">vcount</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-62'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-62'>#</a>
+      </div>
+      <p>Getting the list of followers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">followers</span> <span class="o">=</span> <span class="n">Followers</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+        <span class="n">follow</span><span class="o">=</span><span class="n">followers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">test2</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">follow</span><span class="p">:</span>
+            <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+        <span class="k">for</span> <span class="n">follower1</span> <span class="ow">in</span> <span class="n">follow</span><span class="p">:</span>
+            <span class="n">followe</span><span class="o">=</span><span class="n">follower1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">print</span> <span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">test</span><span class="o">=</span><span class="n">followe</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+                <span class="n">flag</span><span class="o">=</span><span class="bp">True</span>
+            <span class="n">test1</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-63'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-63'>#</a>
+      </div>
+      <p>Checking for duplication and adding to collection</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="n">test</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test2</span><span class="p">:</span>
+                <span class="n">test2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-64'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-64'>#</a>
+      </div>
+      <p>Logic to check if already following or not</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">mylist</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">test2</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">inner</span><span class="p">:</span>
+                    <span class="n">vcount</span><span class="o">=</span><span class="n">vcount</span><span class="o">+</span><span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-65'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-65'>#</a>
+      </div>
+      <p>Getting the list of followers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">user</span><span class="o">=</span><span class="n">Followers</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span><span class="n">mainuser</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-66'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-66'>#</a>
+      </div>
+      <p>Removing a user if already exists in the followers list</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">user</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">u</span><span class="o">.</span><span class="n">followersList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span>
+                            <span class="n">u</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="k">print</span> <span class="s">&quot;Exception caught in removing the follower&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Exception caught in getting the followers&quot;</span>
+    <span class="k">print</span> <span class="s">&quot;out&quot;</span>
+    <span class="k">print</span> <span class="n">vcount</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-67'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-67'>#</a>
+      </div>
+      <p>Add the follower to the follower list if not already exists</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">vcount</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">userInfo</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
+            <span class="n">send_mail</span><span class="p">(</span><span class="s">&quot;New Follower&quot;</span><span class="p">,</span><span class="s">&quot;You have a new follower. Login to your account http://www.takshare.com&quot;</span><span class="p">,</span><span class="s">&quot;tackshare@gmail.com&quot;</span><span class="p">,</span>
+                      <span class="p">[</span><span class="n">userInfo</span><span class="o">.</span><span class="n">email</span><span class="p">],</span><span class="n">fail_silently</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">)</span>
+            <span class="n">user</span><span class="o">=</span><span class="n">Followers</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span><span class="n">mainuser</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">user</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">followersList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Followers</span><span class="p">(</span><span class="n">userName</span><span class="o">=</span> <span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">),</span> <span class="n">followersList</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;saved!&quot;</span>
+    <span class="n">done</span><span class="o">=</span><span class="s">&quot;done&quot;</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;FollowUser.html&quot;</span><span class="p">,{</span><span class="s">&#39;userName&#39;</span><span class="p">:</span><span class="n">username</span><span class="p">,</span><span class="s">&#39;Done&#39;</span><span class="p">:</span><span class="n">done</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-68'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-68'>#</a>
+      </div>
+      <p>This method  is used for processing the auto complete option for search boards.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">auto_board_complete</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-69'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-69'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_ajax</span><span class="p">():</span>
+        <span class="n">searchString</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;search&quot;</span><span class="p">]</span>
+        <span class="n">search_qs</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Name__startswith</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">privacy</span><span class="o">=</span><span class="s">&quot;Public&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">search_qs</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">search_qs</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s">&quot;application/json&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-70'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-70'>#</a>
+      </div>
+      <p>This method is used to search for all public boards.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">search_boards</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-71'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-71'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">searchString</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;search&quot;</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">searchString</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">searchString</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">privacy</span><span class="o">=</span><span class="s">&quot;Public&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">board</span><span class="p">:</span>
+        <span class="n">searchString</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;PrivateBoardAccess.html&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tackNames</span> <span class="o">=</span> <span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tacks</span>
+        <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name__in</span><span class="o">=</span><span class="n">tackNames</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tacks</span><span class="p">:</span>
+            <span class="n">tacks</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;DisplaySearchBoard.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span> <span class="s">&#39;tacks&#39;</span><span class="p">:</span><span class="n">tacks</span><span class="p">,</span> <span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">searchString</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-72'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-72'>#</a>
+      </div>
+      <p>This method is used to mark a tack as Favorite</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">confirm_fav</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-73'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-73'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">tackName</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;tackName&quot;</span><span class="p">)</span>
+    <span class="n">boardName</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;boardName&quot;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">tackName</span>
+    <span class="k">print</span> <span class="n">boardName</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">tackName</span><span class="p">)</span>
+    <span class="n">tack</span> <span class="o">=</span> <span class="n">tacks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">tack</span><span class="o">.</span><span class="n">is_favorite</span><span class="p">):</span>
+        <span class="n">tack</span><span class="o">.</span><span class="n">is_favorite</span><span class="o">=</span><span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tack</span><span class="o">.</span><span class="n">is_favorite</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">tack</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&quot;Marked Favourite&quot;</span>
+    <span class="k">print</span> <span class="n">tack</span><span class="o">.</span><span class="n">file_type</span>
+    <span class="n">boards</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tack</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;DisplayTack.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span> <span class="s">&#39;tack&#39;</span><span class="p">:</span><span class="n">tack</span><span class="p">,</span> <span class="s">&#39;boards&#39;</span> <span class="p">:</span> <span class="n">boards</span><span class="p">,</span> <span class="s">&#39;tags&#39;</span> <span class="p">:</span> <span class="n">tags</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-74'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-74'>#</a>
+      </div>
+      <p>This method is used to edit/update a tack.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit_tack</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-75'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-75'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">tackName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tackName&#39;</span><span class="p">)</span>
+    <span class="n">img_url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;tack_url&quot;</span><span class="p">]</span>
+    <span class="n">file_input</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;file&#39;</span><span class="p">)</span>
+    <span class="n">board_input</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ex_board&#39;</span><span class="p">)</span>
+    <span class="n">tacks</span> <span class="o">=</span> <span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">tackName</span><span class="p">)</span>
+    <span class="n">tack</span> <span class="o">=</span> <span class="n">tacks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tagsString</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="n">tagsString</span><span class="p">):</span>
+        <span class="n">tagsString</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tack</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tagsString</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">tack</span><span class="o">.</span><span class="n">board</span> <span class="o">=</span> <span class="n">board_input</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">file_input</span><span class="p">):</span>
+        <span class="n">tack</span><span class="o">.</span><span class="n">tack_file</span> <span class="o">=</span> <span class="n">file_input</span>
+    <span class="k">elif</span> <span class="n">img_url</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
+        <span class="n">img_temp</span> <span class="o">=</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">img_temp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">img_temp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">parsed_uri</span><span class="o">=</span><span class="n">urlparse</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="s">&#39;{uri.scheme}://{uri.netloc}/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">parsed_uri</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">domain</span>
+        <span class="n">tack</span><span class="o">.</span><span class="n">tack_file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">img_temp</span><span class="p">)</span>
+        <span class="n">tack</span><span class="o">.</span><span class="n">bookmark</span> <span class="o">=</span> <span class="n">domain</span>
+    <span class="n">tack</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/displayTack?tackName=&quot;</span> <span class="o">+</span> <span class="n">tack</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-76'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-76'>#</a>
+      </div>
+      <p>This method is used to display the Edit Board privacy form.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">edit_board_privacy</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-77'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-77'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;boardName&#39;</span><span class="p">)</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;EditBoardPrivacy.html&quot;</span><span class="p">,{</span><span class="s">&#39;board&#39;</span><span class="p">:</span><span class="n">board</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-78'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-78'>#</a>
+      </div>
+      <p>This method is used to edit/update a board's privacy.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@login_required</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">change_board_privacy</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-79'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-79'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">boardName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&#39;boardName&#39;</span><span class="p">]</span>
+    <span class="n">boardPrivacy</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;board_privacy&quot;</span><span class="p">]</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">boardName</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">privacy</span> <span class="o">=</span> <span class="n">boardPrivacy</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&quot;/board?boardName=&quot;</span><span class="o">+</span><span class="n">boardName</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-80'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-80'>#</a>
+      </div>
+      <p>This method is used to display the user's favorite tacks.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">view_favorites</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-81'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-81'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">tacks</span><span class="o">=</span><span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_favorite</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tacks</span><span class="p">:</span>
+        <span class="n">tacks</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;FavoritesHome.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span><span class="s">&#39;tacks&#39;</span><span class="p">:</span><span class="n">tacks</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-82'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-82'>#</a>
+      </div>
+      <p>This method is used to display the Information page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">display_info_screen</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-83'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-83'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;InfoScreen.html&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-84'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-84'>#</a>
+      </div>
+      <p>This method is used to search tacks by tags.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">search_tags</span><span class="p">(</span><span class="n">request</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-85'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-85'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">tackArray</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">tackList</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">tacked</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">searchString</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">&quot;search&quot;</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">searchString</span>
+    <span class="n">board</span><span class="o">=</span><span class="n">Boards</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">privacy</span><span class="o">=</span><span class="s">&quot;Public&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">board</span><span class="p">:</span>
+        <span class="n">board</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">board</span><span class="p">:</span>
+            <span class="n">tackList</span><span class="o">=</span><span class="n">TackImages</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">print</span> <span class="n">tackList</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tackList</span><span class="p">:</span>
+            <span class="n">tacked</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="k">for</span> <span class="n">tack</span> <span class="ow">in</span> <span class="n">tackList</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">tack</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;No tags&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="n">tack</span><span class="o">.</span><span class="n">tags</span>
+                    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tack</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="n">tag</span>
+                        <span class="k">if</span><span class="p">(</span><span class="n">searchString</span><span class="o">==</span><span class="n">tag</span><span class="p">):</span>
+                            <span class="n">tacked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tack</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tacked</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">tacked</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&quot;DisplaySeachTags.html&quot;</span><span class="p">,{</span><span class="s">&#39;MEDIA_URL&#39;</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">MEDIA_URL</span><span class="p">,</span><span class="s">&#39;boardName&#39;</span><span class="p">:</span><span class="n">board</span><span class="p">,</span><span class="s">&#39;tacks&#39;</span><span class="p">:</span><span class="n">tacked</span><span class="p">})</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

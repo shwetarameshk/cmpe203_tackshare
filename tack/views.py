@@ -18,12 +18,10 @@ from django.core.files import File
 from django.core.mail import send_mail
 from PIL import Image
 from itertools import chain
-
-  #add imprt of content file wrapper
 from django.core.files.base import ContentFile
 import connect
-# Create your views here.
 
+# Create your views here.
 
 def home(request):
     """
@@ -37,12 +35,12 @@ def home(request):
             yourBoards = "None"
         #To get all the followers
         followersBoard=[]
+        boardDisplay = []
         follower = []
         try:
             followers = Followers.objects.filter(userName=whoami)
             follow=followers.values()
             test2=[]
-            #print follow
             #Iterate over the list values
             for follower1 in follow:
                 followe=follower1.values()
@@ -53,27 +51,35 @@ def home(request):
                 test2.append(test)
             #iterate over the obtained collection
             for name in test2:
-                #Add the boards of all the fllowers into a collection
+                #Add the boards of all the followers into a collection
                 followersBoard.append(Boards.objects.order_by('name').filter(username=test1))
             otherBoards = Boards.objects.order_by('name').filter(~Q(username = whoami))
             try:
                 #Preventing repetitive display by getting the first collection
                 print followersBoard[0]
-                #If there are no followers, all public boards will be displayed
-                otherBoards=followersBoard[0]
+                boardDisplay = followersBoard[0]
             except:
                 print "Caught an exception in retrieving the boards of followers"
         except:
             print "Caught exception in getting the followers"
+        visibleFavoriteBoards = []
+
+        for board in boardDisplay:
+            visibleTo = board.visible_to_users
+            if str(whoami) in visibleTo:
+                visibleFavoriteBoards.append(board)
+        if not visibleFavoriteBoards:
+            visibleFavoriteBoards = "None"
+        print visibleFavoriteBoards
+
         visibleBoards = []
         for board in otherBoards:
-            #visibleTo = board.visible_to_users
-            #if str(whoami) in visibleTo:
-            visibleBoards.append(board)
+            visibleTo = board.visible_to_users
+            if str(whoami) in visibleTo:
+                visibleBoards.append(board)
         if not visibleBoards:
             visibleBoards = "None"
         print visibleBoards
-        numBoards = Boards.objects.filter(username=whoami).count()
         numPublicBoards = Boards.objects.filter(username=whoami,privacy='Public').count()
         numPrivateBoards = Boards.objects.filter(username=whoami,privacy='Private').count()
         numTacks = TackImages.objects.filter(username=whoami).count()
@@ -119,6 +125,7 @@ def login_user(request):
     """
     This method is for user's login and authentication
     """
+    #Authenticate the user
     user = authenticate(username=request.POST["username"], password=request.POST["password"])
     if user is not None:
         login(request, user)
@@ -141,6 +148,7 @@ def register(request):
                        follow = 'on',
                        addtack = 'on',
                        favorite = 'on').save()
+        #Send email on registration
         send_mail("registered","Dude!! Welcome to the Fun World. Login to your account http://www.tackshare.com","tackshare@gmail.com",[request.POST["email"]],fail_silently="false")
         return render_to_response("Home.html", {'status': request.POST["username"]+"!! Registered Successfully! Please Login"})
     else:
@@ -175,6 +183,7 @@ def update_dashboard(request):
            privacy=request.POST["board_privacy"],
            username=get_user(request),
            ).save()
+    #Redirect to home page
     return redirect("/")
 
 @login_required
@@ -196,6 +205,7 @@ def save_tack(request):
     if not enteredTags:
         tagArray=[]
     else:
+        #Get tags for the tack
         tagArray=[]
         tagsSplit=enteredTags.split()
         print tagsSplit
@@ -204,15 +214,16 @@ def save_tack(request):
             tagArray.append(str(ts))
         print tagArray
         print str(tagArray)
+    #Save tack details
     TackImages(file_name=request.POST["tack_name"],
                tack_file = request.FILES["file"],
                file_type = tackFileType,
-               #tags=request.POST["tags"],
                tags=tagArray,
                username=get_user(request),
                bookmark=request.POST["tack_url"],
                board=boardName
                ).save()
+    #Add tack to board
     board = Boards.objects.get(name=boardName)
     tack_name = request.POST["tack_name"]
     board.tacks.append(tack_name)
@@ -233,8 +244,6 @@ def url_save_tack(request):
         boardName = request.POST["ex_board"]
     img_url = request.POST["tack_url"]
     print img_url
-    #content = ContentFile(urllib2.urlopen(img_url).read())
-    #print content
     r = requests.get(img_url)
     img_temp = NamedTemporaryFile(delete=True)
     img_temp.write(r.content)
@@ -242,6 +251,7 @@ def url_save_tack(request):
     parsed_uri=urlparse(img_url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
+    #Save tack details
     TackImages(file_name=request.POST["tack_name"],
                tack_file = File(img_temp),
                file_type = "image",
@@ -250,6 +260,7 @@ def url_save_tack(request):
                bookmark=request.POST["tack_url"],
                board=boardName
                ).save()
+    #Add tack to board
     board = Boards.objects.get(name=boardName)
     tack_name = request.POST["tack_name"]
     board.tacks.append(tack_name)
@@ -273,8 +284,10 @@ def save_board(request):
                    privacy=request.POST["board_privacy"],
                    username=get_user(request),
                    ).save()
+        #Return success
         response_data['result']="success"
     except:
+        #Return failure
         response_data['result']="failure"
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
@@ -290,12 +303,12 @@ def show_tacks(request):
     """
     boardName = request.GET.get('boardName')
     board = Boards.objects.get(name=boardName)
-    #board name must be unique
     tackNames = board.tacks
     if not board.visible_to_users:
         sharedWith="none"
     else:
         sharedWith = board.visible_to_users
+    #Get all tacks in the board
     tacks = TackImages.objects.filter(file_name__in=tackNames)
     if not tacks:
         tacks = ""
@@ -307,15 +320,11 @@ def display_tack(request):
     This method is used to display the details of a tack.
     """
     tackName = request.GET.get('tackName')
+    #Get tack details
     tacks = TackImages.objects.filter(file_name=tackName)
     tack = tacks[0]
-
-    #boards and tags Added by Sindhu. boards are needed for the Edit tack.
-    # Also, transform the tags before sending it to Edit Tack.
     boards = Boards.objects.filter(username=get_user(request))
     tags = ','.join(tack.tags)
-    print tack.tags
-    print tags
     return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
 
 
@@ -341,6 +350,7 @@ def unshare_board(request):
     boardName = request.GET.get('boardName')
     userName = request.GET.get('userName')
     board = Boards.objects.get(name=boardName)
+    #Remove user from visible_to list
     board.visible_to_users.remove(userName)
     board.save()
     sharedWith = board.visible_to_users
@@ -355,10 +365,9 @@ def share_with_user(request):
     shareWith = request.POST['search']
     boardName = request.POST['boardName']
     board = Boards.objects.get(name=boardName)
+    #Add user name to board's list of visible users
     board.visible_to_users.append(shareWith)
     board.save()
-    tackNames = board.tacks
-    tacks = TackImages.objects.filter(file_name__in=tackNames)
     return redirect("/board?boardName="+boardName)
 
 @login_required
@@ -396,10 +405,10 @@ def search_users(request):
     This method is used to search for registered users.
     """
     searchString=request.POST["search"]
-    print searchString
     userResults=User.objects.filter(username=searchString)
     if(len(userResults)>0):
         userName=User.get_username(userResults[0])
+        #Get all boards of the searched user
         publicBoards = Boards.objects.order_by('name').filter(privacy="Public",username=searchString)
         otherBoards = Boards.objects.order_by('name').filter(privacy="Private",username=searchString)
         visibleBoards = []
@@ -415,7 +424,6 @@ def auto_complete_model(request):
     """
     This method is used for processing the auto complete option for search users.
     """
-   # search_qs = User.objects.filter(username__startswith=request.REQUEST['search'])
     if request.is_ajax():
         searchString=request.POST["search"]
         search_qs = User.objects.filter(username__startswith=searchString)
@@ -433,8 +441,6 @@ def follow_user(request):
     This method is used to display the Follow User form  and check if he/she is followed already
     """
     username=request.GET.get('userName')
-    #print username
-    #local variable declarations
     followersBoard=[]
     follower = []
     flag=False
@@ -480,7 +486,6 @@ def save_follow(request):
     """
     #Get the person to follow
     username=request.GET.get('userName')
-    #print username
     #Get the username of the current user
     mainuser=get_user(request)
     #Local variable declarations
@@ -527,6 +532,9 @@ def save_follow(request):
     #Add the follower to the follower list if not already exists
     if vcount==0:
         try:
+            userInfo = User.objects.get(username=username)
+            send_mail("New Follower","You have a new follower. Login to your account http://www.takshare.com","tackshare@gmail.com",
+                      [userInfo.email],fail_silently="false")
             user=Followers.objects.get(userName=mainuser)
             print user
             user.followersList.append(username)
@@ -534,22 +542,8 @@ def save_follow(request):
         except:
             Followers(userName= get_user(request), followersList=username).save()
         print "saved!"
-        #except:
-        #    Followers(userName= get_user(request), followersList=username).save()
-        #    print "in except"
-
     done="done"
     return render_to_response("FollowUser.html",{'userName':username,'Done':done})
-
-@csrf_exempt
-def save_follow(request):
-    """
-    This method is used to save the follower
-    """
-    username=request.GET.get('userName')
-    print username
-    Followers(userName=username).save()
-    return render_to_response("FollowUser.html",{'userName':username})
 
 @csrf_exempt
 def auto_board_complete(request):
@@ -573,6 +567,7 @@ def search_boards(request):
     """
     searchString=request.POST["search"]
     print searchString
+    #Get all public boards
     board = Boards.objects.filter(name=searchString).filter(privacy="Public")
     if not board:
         searchString=""
@@ -591,17 +586,14 @@ def confirm_fav(request):
     """
     tackName=request.GET.get("tackName")
     boardName=request.GET.get("boardName")
-    print tackName
-    print boardName
+    #Get tack details
     tacks = TackImages.objects.filter(file_name=tackName)
     tack = tacks[0]
-    if(tack.is_favorite):
+    if tack.is_favorite:
         tack.is_favorite=False
     else:
         tack.is_favorite=True
     tack.save()
-    print "Marked Favourite"
-    print tack.file_type
     boards = Boards.objects.filter(username=get_user(request))
     tags = ''.join(tack.tags)
     return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
@@ -617,21 +609,13 @@ def edit_tack(request):
     img_url = request.POST["tack_url"]
     file_input = request.FILES.get('file')
     board_input = request.POST.get('ex_board')
-
-#    print >>sys.stderr, str(tackName)
-
-
     tacks = TackImages.objects.filter(file_name=tackName)
     tack = tacks[0]
     tagsString = request.POST.get('tags')
     if(not tagsString):
         tagsString = ''
     tack.tags = tagsString.split()
-
     tack.board = board_input
-
-
-    #Check if file input is given, then use it. Otherwise, check the url. If both are provided, file input gets precedence.
     if (file_input):
         tack.tack_file = file_input
     elif img_url:
@@ -644,8 +628,7 @@ def edit_tack(request):
         print domain
         tack.tack_file = File(img_temp)
         tack.bookmark = domain
-
-
+    #Save updated tack
     tack.save()
     return redirect("/displayTack?tackName=" + tack.file_name)
 
@@ -669,6 +652,7 @@ def change_board_privacy(request):
     boardPrivacy = request.POST["board_privacy"]
     board = Boards.objects.get(name=boardName)
     board.privacy = boardPrivacy
+    #Update board privacy
     board.save()
     return redirect("/board?boardName="+boardName)
 
@@ -679,7 +663,7 @@ def view_favorites(request):
     """
     tacks=TackImages.objects.filter(is_favorite=True)
     if not tacks:
-        tacks=""
+        tacks = ""
     return render_to_response("FavoritesHome.html",{'MEDIA_URL': settings.MEDIA_URL,'tacks':tacks})
 
 def display_info_screen(request):
@@ -693,7 +677,6 @@ def search_tags(request):
     """
     This method is used to search tacks by tags.
     """
-    tackArray=[]
     tackList=[]
     tacked=[]
     searchString=request.POST["search"]
@@ -712,12 +695,12 @@ def search_tags(request):
                 if not tack.tags:
                     print "No tags"
                 else:
+                    #Get tags
                     print tack.tags
                     for tag in tack.tags:
                         print tag
                         if(searchString==tag):
                             tacked.append(tack)
-
     if (len(tacked)==0):
         tacked=""
     return render_to_response("DisplaySeachTags.html",{'MEDIA_URL': settings.MEDIA_URL,'boardName':board,'tacks':tacked})
