@@ -31,17 +31,48 @@ def home(request):
     """
     if request.user.is_authenticated():
         whoami = get_user(request)
+        print whoami
         yourBoards = Boards.objects.order_by('Name').filter(username=whoami)[:10]
         if not yourBoards:
             yourBoards = "None"
-        otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
+        #To get all the followers
+        followersBoard=[]
+        follower = []
+        try:
+            followers = Followers.objects.filter(userName=whoami)
+            follow=followers.values()
+            test2=[]
+            #print follow
+            #Iterate over the list values
+            for follower1 in follow:
+                followe=follower1.values()
+                print followe.pop()
+                test=followe.pop()
+                test1="".join(test)
+                #Add the obtained values into the collection
+                test2.append(test)
+            #iterate over the obtained collection
+            for name in test2:
+                #Add the boards of all the fllowers into a collection
+                followersBoard.append(Boards.objects.order_by('Name').filter(username=test1))
+            otherBoards = Boards.objects.order_by('Name').filter(~Q(username = whoami))
+            try:
+                #Preventing repetitive display by getting the first collection
+                print followersBoard[0]
+                #If there are no followers, all public boards will be displayed
+                otherBoards=followersBoard[0]
+            except:
+                print "Caught an exception in retrieving the boards of followers"
+        except:
+            print "Caught exception in getting the followers"
         visibleBoards = []
         for board in otherBoards:
-            visibleTo = board.VisibleToUsers
-            if str(whoami) in visibleTo:
-                visibleBoards.append(board)
+            #visibleTo = board.VisibleToUsers
+            #if str(whoami) in visibleTo:
+            visibleBoards.append(board)
         if not visibleBoards:
             visibleBoards = "None"
+        print visibleBoards
         numBoards = Boards.objects.filter(username=whoami).count()
         numPublicBoards = Boards.objects.filter(username=whoami,Privacy='Public').count()
         numPrivateBoards = Boards.objects.filter(username=whoami,Privacy='Private').count()
@@ -399,12 +430,116 @@ def auto_complete_model(request):
 @csrf_exempt
 def follow_user(request):
     """
-    This method is used to display the Follow User form
+    This method is used to display the Follow User form  and check if he/she is followed already
     """
-    userName=request.GET.get('userName')
-    #print userName
-    return render_to_response("FollowUser.html",{'userName':userName})
+    username=request.GET.get('userName')
+    #print username
+    #local variable declarations
+    followersBoard=[]
+    follower = []
+    flag=False
+    test2=[]
+    vcount=0
+    try:
+        #getting the followers
+        followers = Followers.objects.filter(userName=get_user(request))
+        follow=followers.values()
+        if not follow:
+            flag=True
+        for follower1 in follow:
+            followe=follower1.values()
+            print followe.pop()
+            test=followe.pop()
+            if test==[]:
+                flag=True
+            test1="".join(test)
+            test2.append(test)
+        for name in test2:
+            for inner in name:
+                #Flagging if the follower already exists
+                if username in inner:
+                    flag=True
+                    vcount=vcount+1
+    except:
+        print "very sorry"
+    print vcount
+    #Check if already followed
+    if vcount==0:
+        print "Follow"
+        flag=True
+    else:
+        print "Unfollow"
+        flag=False
+    return render_to_response("FollowUser.html",{'userName':username,'flag':flag})
 
+
+@csrf_exempt
+def save_follow(request):
+    """
+    This method is used to save the follower if not already exists and remove the follower if already exists
+    """
+    #Get the person to follow
+    username=request.GET.get('userName')
+    #print username
+    #Get the username of the current user
+    mainuser=get_user(request)
+    #Local variable declarations
+    followersBoard=[]
+    follower = []
+    flag=False
+    vcount=0
+    try:
+        #Getting the list of followers
+        followers = Followers.objects.filter(userName=get_user(request))
+        follow=followers.values()
+        test2=[]
+        if not follow:
+            flag=True
+        for follower1 in follow:
+            followe=follower1.values()
+            print followe.pop()
+            test=followe.pop()
+            if not test:
+                flag=True
+            test1="".join(test)
+            #Checking for duplication and adding to collection
+            if test not in test2:
+                test2.append(test)
+        #Logic to check if already following or not
+        mylist=[]
+        for name in test2:
+            for inner in name:
+                if username in inner:
+                    vcount=vcount+1
+                    #Getting the list of followers
+                    user=Followers.objects.filter(userName=mainuser)
+                    #Removing a user if already exists in the followers list
+                    for u in user:
+                        try:
+                            u.followersList.remove(inner)
+                            u.save()
+                        except:
+                            print "Exception caught in removing the follower"
+    except:
+        print "Exception caught in getting the followers"
+    print "out"
+    print vcount
+    #Add the follower to the follower list if not already exists
+    if vcount==0:
+        try:
+            user=Followers.objects.get(userName=mainuser)
+            print user
+            user.followersList.append(username)
+            user.save()
+        except:
+            Followers(userName= get_user(request), followersList=username).save()
+        print "saved!"
+        #except:
+        #    Followers(userName= get_user(request), followersList=username).save()
+        #    print "in except"
+
+    done="done"
+    return render_to_response("FollowUser.html",{'userName':username,'Done':done})
 
 @csrf_exempt
 def save_follow(request):
@@ -419,7 +554,7 @@ def save_follow(request):
 @csrf_exempt
 def auto_board_complete(request):
     """
-    This method is used for processing the auto complete option for search boards.
+    This method  is used for processing the auto complete option for search boards.
     """
     if request.is_ajax():
         searchString=request.POST["search"]

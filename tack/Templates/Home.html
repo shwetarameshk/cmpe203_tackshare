@@ -23,7 +23,42 @@
         }
     </script>
 	<body>
-        <div class="container">
+<script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '285287374980377',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+	};
+	function checklogin(){
+	FB.getLoginStatus(function(response) {
+        // checks if user already authorized	
+        if (response.status === 'connected') {
+        FB.api('/me', function(user) {
+	var username=user.first_name+"."+user.last_name;
+	document.getElementById('firstname').value=user.first_name;
+	document.getElementById('lastname').value=user.last_name;
+	document.getElementById('email').value=user.email;
+	document.getElementById('signupusername').value=username.toLowerCase();
+	document.getElementById('postfbsignup').innerHTML='Please enter your password and hit Signup';		           
+			 });
+		}
+	else{
+	FB.login();
+		}
+      		});
+	}
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+	     <div class="container">
             <section>				
                 <div id="container_demo" >
                     <!-- hidden anchor to stop jump http://www.css3create.com/Astuce-Empecher-le-scroll-avec-l-utilisation-de-target#wrap4  -->
@@ -56,11 +91,12 @@
 									<a href="#toregister" class="to_register">Join us</a>
 								</p>
                             </form>
-                        </div>
-
-                        <div id="register" class="animate form">
+                       </div>
+                       <div id="register" class="animate form">
                             <form   name=" registerform"autocomplete="on" action="/register" method="post">
                                 <h1> Sign up </h1>
+				<div id="postfbsignup">
+				</div>
                                 <p>
                                     <label for="fnamesignup" class="fname" data-icon="e" > First Name</label>
                                     <input id="firstname" name="firstname" required="required" type="text" placeholder="tack"/>
@@ -71,7 +107,7 @@
                                 </p>
                                 <p> 
                                     <label for="usernamesignup" class="uname" data-icon="u">Your username</label>
-                                    <input id="username" name="username" required="required" type="text" placeholder="tackshare" />
+                                    <input id="signupusername" name="username" required="required" type="text" placeholder="tackshare" />
                                 </p>
                                 <p> 
                                     <label for="emailsignup" class="youmail" data-icon="e" > Your email</label>
@@ -85,8 +121,11 @@
                                     <label for="passwordsignup_confirm" class="youpasswd" data-icon="p">Please confirm your password </label>
                                     <input id="passwordAgain" name="passwordAgain" required="required" type="password" placeholder="eg. X8df!90EO"/>
                                 </p>
-                                <p class="signin button"> 
-									<input type="submit" value="Sign up"/>
+                                <p> 
+						<fb:login-button scope="public_profile,email" data-max-rows="1" data-size="large" data-show-faces="true" data-auto-logout-link="true" onlogin="checklogin();"> 
+						</fblogin>	</p>			
+				<p class="signin button">	
+					<input type="submit" value="Sign up"/>
 								</p>
                                 <p class="change_link">  
 									Already a member ?
@@ -99,6 +138,6 @@
                 </div>  
             </section>
         </div>
-
+	</fb:login-button>
     </body>
 </html>

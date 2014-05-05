@@ -11,28 +11,61 @@
     <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript">
+        //Function to check whether the user being browsed is already followed or not
+        function Check()
+        {
+            var checker="{{ flag }}";
+            if(checker==="True")
+            {
+                document.getElementById('maintext').innerHTML="Follow {{ userName }}"
+                document.getElementById('follow').value="Follow";
+            }
+            else
+            {
+                document.getElementById('maintext').innerHTML="Unfollow {{ userName }}"
+                document.getElementById('follow').value="UnFollow";
+            }
+            //Code to close the Shadowbox on getting the response
+            var v="{{ Done }}";
+            if(v)
+            {
+                window.parent.Shadowbox.close();
+            }
+        }
+        //Function to submit the form
+        function execute()
+        {
+            document.sender.submit();
+        }
+    </script>
 
 </head>
-<body>
+<body onload="Check()">
 
 <div class="container">
     <section>
         <div id="container_demo">
             <div id="wrapper">
 
-                <div class="ui top center attached blue label" style="align-content: center">Follow {{ userName }} ?
+                <div id="maintext" class="ui top center attached blue label" style="align-content: center">Follow {{ userName }} ?
                 </div>
                 <br> <br><br>
-
                  <div class="ui blue button center">
                     <a href="/SaveFollow?userName=y">
                         Confirm
                     </a>
+
+                <form id="sender" name="sender" action="/SaveFollow?userName={{ userName }}" method="post" >
+                 <div >
+                    <input name="follow" id="follow" class="ui blue button center" type="button" value="Follow" onclick="execute()" >
+
                  </div>
+                    </form>
              </div>
 
         </div>
-
+</div>
     </section>
 </div>
 
