@@ -422,9 +422,44 @@ def follow_user(request):
     """
     This method is used to display the Follow User form
     """
-    userName=request.GET.get('userName')
-    #print userName
-    return render_to_response("FollowUser.html",{'userName':userName})
+    username=request.GET.get('userName')
+    print username
+    followersBoard=[]
+    follower = []
+    flag=False
+    test2=[]
+    vcount=0
+    try:
+        followers = Followers.objects.filter(userName=get_user(request))
+        follow=followers.values()
+        print follow
+        print followers
+        print "kl"
+        if not follow:
+            flag=True
+        for follower1 in follow:
+            followe=follower1.values()
+            print followe.pop()
+            test=followe.pop()
+            if test==[]:
+                flag=True
+            test1="".join(test)
+            test2.append(test)
+        for name in test2:
+            for inner in name:
+                if username in inner:
+                    flag=True
+                    vcount=vcount+1
+    except:
+        print "very sorry"
+    print vcount
+    if vcount==0:
+        print "Follow"
+        flag=True
+    else:
+        print "Unfollow"
+        flag=False
+    return render_to_response("FollowUser.html",{'userName':username,'flag':flag})
 
 
 @csrf_exempt
@@ -434,18 +469,62 @@ def save_follow(request):
     """
     username=request.GET.get('userName')
     print username
+    mainuser=get_user(request)
+    followersBoard=[]
+    follower = []
+    flag=False
+    vcount=0
     try:
-        user=Followers.objects.get(userName=username)
-        user.followersList.append(username)
-        user.save()
+        followers = Followers.objects.filter(userName=get_user(request))
+        follow=followers.values()
+        test2=[]
+        print follow
+        if not follow:
+            flag=True
+        for follower1 in follow:
+            followe=follower1.values()
+            print followe.pop()
+            test=followe.pop()
+            if not test:
+                flag=True
+            test1="".join(test)
+            if test not in test2:
+                test2.append(test)
+        mylist=[]
+        for name in test2:
+            for inner in name:
+                print inner
+                if username in inner:
+                    print username+"-"+inner
+                    vcount=vcount+1
+                    user=Followers.objects.filter(userName=mainuser)
+                    print user
+                    for u in user:
+                        try:
+                            u.followersList.remove(inner)
+                            u.save()
+                        except:
+                            print "bye"
     except:
-        Followers(userName= get_user(request), followersList=username).save()
+        print "very sorry"
+    print "out"
+    print vcount
+    if vcount==0:
+        try:
+            user=Followers.objects.get(userName=mainuser)
+            print user
+            user.followersList.append(username)
+            user.save()
+        except:
+            Followers(userName= get_user(request), followersList=username).save()
+        print "saved!"
+        #except:
+        #    Followers(userName= get_user(request), followersList=username).save()
+        #    print "in except"
 
-    print "saved!"
-    #except:
-    #    Followers(userName= get_user(request), followersList=username).save()
-    #    print "in except"
-    return render_to_response("FollowUser.html",{'userName':username})
+    done="done"
+    return render_to_response("FollowUser.html",{'userName':username,'Done':done})
+
 
 @csrf_exempt
 def auto_board_complete(request):
