@@ -33,45 +33,6 @@ def home(request):
         yourBoards = Boards.objects.order_by('name').filter(username=whoami)
         if not yourBoards:
             yourBoards = "None"
-        #To get all the followers
-        followersBoard=[]
-        boardDisplay = []
-        follower = []
-        try:
-            followers = Followers.objects.filter(userName=whoami)
-            follow=followers.values()
-            test2=[]
-            #Iterate over the list values
-            for follower1 in follow:
-                followe=follower1.values()
-                print followe.pop()
-                test=followe.pop()
-                test1="".join(test)
-                #Add the obtained values into the collection
-                test2.append(test)
-            #iterate over the obtained collection
-            for name in test2:
-                #Add the boards of all the followers into a collection
-                followersBoard.append(Boards.objects.order_by('name').filter(username=test1))
-
-            try:
-                #Preventing repetitive display by getting the first collection
-                print followersBoard[0]
-                boardDisplay = followersBoard[0]
-            except:
-                print "Caught an exception in retrieving the boards of followers"
-        except:
-            print "Caught exception in getting the followers"
-        visibleFavoriteBoards = []
-
-        for board in boardDisplay:
-            visibleTo = board.visible_to_users
-            print visibleTo
-            if str(whoami) in visibleTo:
-                visibleFavoriteBoards.append(board)
-        if not visibleFavoriteBoards:
-            visibleFavoriteBoards = "None"
-        print visibleFavoriteBoards
         otherBoards = Boards.objects.order_by('name').filter(~Q(username = whoami))
         visibleBoards = []
         for board in otherBoards:
@@ -85,7 +46,7 @@ def home(request):
         numPrivateBoards = Boards.objects.filter(username=whoami,privacy='Private').count()
         numTacks = TackImages.objects.filter(username=whoami).count()
         return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,
-                                                     'otherBoards':visibleFavoriteBoards,
+                                                     'otherBoards':visibleBoards,
                                                     'numPublicBoards':numPublicBoards,
                                                     'numPrivateBoards':numPrivateBoards,
                                                     'numTacks':numTacks})
