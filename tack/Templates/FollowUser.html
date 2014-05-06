@@ -51,17 +51,11 @@
                 <div id="maintext" class="ui top center attached blue label" style="align-content: center">Follow {{ userName }} ?
                 </div>
                 <br> <br><br>
-                 <div class="ui blue button center">
-                    <a href="/SaveFollow?userName=y">
-                        Confirm
-                    </a>
-
+                <div align="center">
                 <form id="sender" name="sender" action="/SaveFollow?userName={{ userName }}" method="post" >
-                 <div >
                     <input name="follow" id="follow" class="ui blue button center" type="button" value="Follow" onclick="execute()" >
-
+                </form>
                  </div>
-                    </form>
              </div>
 
         </div>

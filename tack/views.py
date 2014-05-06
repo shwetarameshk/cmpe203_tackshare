@@ -53,7 +53,7 @@ def home(request):
             for name in test2:
                 #Add the boards of all the followers into a collection
                 followersBoard.append(Boards.objects.order_by('name').filter(username=test1))
-            otherBoards = Boards.objects.order_by('name').filter(~Q(username = whoami))
+
             try:
                 #Preventing repetitive display by getting the first collection
                 print followersBoard[0]
@@ -66,12 +66,13 @@ def home(request):
 
         for board in boardDisplay:
             visibleTo = board.visible_to_users
+            print visibleTo
             if str(whoami) in visibleTo:
                 visibleFavoriteBoards.append(board)
         if not visibleFavoriteBoards:
             visibleFavoriteBoards = "None"
         print visibleFavoriteBoards
-
+        otherBoards = Boards.objects.order_by('name').filter(~Q(username = whoami))
         visibleBoards = []
         for board in otherBoards:
             visibleTo = board.visible_to_users
@@ -84,7 +85,7 @@ def home(request):
         numPrivateBoards = Boards.objects.filter(username=whoami,privacy='Private').count()
         numTacks = TackImages.objects.filter(username=whoami).count()
         return render_to_response("Dashboard.html", {'MEDIA_URL': settings.MEDIA_URL,'yourBoards':yourBoards,
-                                                     'otherBoards':visibleBoards,
+                                                     'otherBoards':visibleFavoriteBoards,
                                                     'numPublicBoards':numPublicBoards,
                                                     'numPrivateBoards':numPrivateBoards,
                                                     'numTacks':numTacks})
@@ -447,24 +448,27 @@ def follow_user(request):
     test2=[]
     vcount=0
     try:
-        #getting the followers
+        #Getting the list of followers
         followers = Followers.objects.filter(userName=get_user(request))
         follow=followers.values()
+        test2=[]
         if not follow:
             flag=True
         for follower1 in follow:
             followe=follower1.values()
             print followe.pop()
             test=followe.pop()
-            if test==[]:
+            if not test:
                 flag=True
-            test1="".join(test)
-            test2.append(test)
+            #Checking for duplication and adding to collection
+            if test not in test2:
+                test2.append(test)
+        #Logic to check if already following or not
         for name in test2:
+            print name
             for inner in name:
-                #Flagging if the follower already exists
+                print inner
                 if username in inner:
-                    flag=True
                     vcount=vcount+1
     except:
         print "very sorry"
@@ -506,14 +510,15 @@ def save_follow(request):
             test=followe.pop()
             if not test:
                 flag=True
-            test1="".join(test)
             #Checking for duplication and adding to collection
             if test not in test2:
                 test2.append(test)
+        print test2
         #Logic to check if already following or not
-        mylist=[]
         for name in test2:
+            print name
             for inner in name:
+                print inner
                 if username in inner:
                     vcount=vcount+1
                     #Getting the list of followers
@@ -532,15 +537,32 @@ def save_follow(request):
     #Add the follower to the follower list if not already exists
     if vcount==0:
         try:
+            nameString = username
+            if(not nameString):
+                nameString = ''
+            trimname = nameString.split()
             userInfo = User.objects.get(username=username)
             send_mail("New Follower","You have a new follower. Login to your account http://www.takshare.com","tackshare@gmail.com",
                       [userInfo.email],fail_silently="false")
             user=Followers.objects.get(userName=mainuser)
-            print user
-            user.followersList.append(username)
+            user.followersList.append(trimname)
             user.save()
+
         except:
-            Followers(userName= get_user(request), followersList=username).save()
+            nameString = username
+            if(not nameString):
+                nameString = ''
+            trimname = nameString.split()
+            Followers(userName= get_user(request), followersList=trimname).save()
+        finally:
+            print username
+            boards=Boards.objects.order_by('name').filter(username=username)
+            print boards
+            for boardName in boards:
+                board = Boards.objects.get(name=boardName.name)
+                #Add user name to board's list of visible users
+                board.visible_to_users.append(mainuser)
+                board.save()
         print "saved!"
     done="done"
     return render_to_response("FollowUser.html",{'userName':username,'Done':done})
