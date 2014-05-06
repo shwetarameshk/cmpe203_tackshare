@@ -541,6 +541,15 @@ def save_follow(request):
                     #Removing a user if already exists in the followers list
                     for u in user:
                         try:
+                            print username
+                            boards=Boards.objects.order_by('name').filter(username=inner)
+                            for boardName in boards:
+                                print boardName
+                                print boardName.name
+                                board = Boards.objects.get(name=boardName)
+                                #Add user name to board's list of visible users
+                                board.visible_to_users.remove(mainuser.username)
+                                board.save()
                             u.followersList.remove(inner)
                             u.save()
                         except:
@@ -574,10 +583,13 @@ def save_follow(request):
             boards=Boards.objects.order_by('name').filter(username=username)
             print boards
             for boardName in boards:
-                board = Boards.objects.get(name=boardName.name)
+                print boardName
+                print mainuser
+                b = Boards.objects.get(name=boardName)
                 #Add user name to board's list of visible users
-                board.visible_to_users.append(mainuser)
-                board.save()
+                b.visible_to_users.append(mainuser.username)
+                print b.visible_to_users
+                b.save()
         print "saved!"
     done="done"
     return render_to_response("FollowUser.html",{'userName':username,'Done':done})
