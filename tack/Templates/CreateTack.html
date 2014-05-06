@@ -2,7 +2,20 @@
 <html>
 <head>
     <script type="text/javascript" src="/static/jquery-1.6.1.min.js"></script>
-
+    <script type="text/javascript">
+        //Function to submit the form
+        function execute()
+        {
+            if(document.getElementById('file').value!=''||document.getElementById('tack_url').value!='')
+            {
+                document.sender.submit();
+            }
+            else
+            {
+                alert("Upload a file or provide a url to create a tack");
+            }
+        }
+    </script>
     <script type="text/javascript">
         $(document).ready(function(){
             $("#submitBoard").click(function(){
@@ -136,7 +149,7 @@
         <div id="container_demo">
             <div id="wrapper">
                 <div id="createtack" class="ui form segment" >
-                    <form action="/saveTack" method="post" enctype="multipart/form-data">
+                    <form id="sender" name="sender" action="/saveTack" method="post" enctype="multipart/form-data">
                         <div class="field">
                             <label for="tack_name">Filename:</label>
                             <div class="input">
@@ -146,13 +159,13 @@
                         <div class="field">
                             <label for="file">Image/Video:</label>
                             <div class="input">
-                                <input type="file" name="file" id="file" required="required"><br>
+                                <input type="file" name="file" id="file"><br>
                             </div>
                         </div>
                         <div class="field">
                             <label for="tack_url">URL:</label>
                             <div class="input">
-                                <input type="url" name="tack_url" placeholder="URL to be added as bookmark"></br>
+                                <input type="url" id="tack_url" name="tack_url" placeholder="URL to be added as bookmark"></br>
                             </div>
                         </div>
                         <div class="field">
@@ -185,7 +198,7 @@
                         <input id="new_board" name="new_board" type="hidden">
                         <br />
 
-                        <input class="ui button blue" type="submit" name="submit" value="Create!">
+                        <input class="ui button blue" type="button" name="submit" value="Create!" onclick="execute()">
                     </form>
                 </div>
             </div>

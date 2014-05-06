@@ -193,16 +193,13 @@ def save_tack(request):
     """
     This method is used to save a new tack.
     """
+    img_url = request.POST["tack_url"]
+    file_input = request.FILES.get('file')
     if request.POST["new_board"]!="":
         boardName = request.POST["new_board"]
     else:
         boardName = request.POST["ex_board"]
-    try:
-        im=Image.open(request.FILES["file"])
-        tackFileType = "image"
-    except IOError:
-        tackFileType = "not image"
-    enteredTags=request.POST["tags"]
+        enteredTags=request.POST["tags"]
     if not enteredTags:
         tagArray=[]
     else:
@@ -215,9 +212,27 @@ def save_tack(request):
             tagArray.append(str(ts))
         print tagArray
         print str(tagArray)
+    if (file_input):
+        try:
+            im=Image.open(request.FILES["file"])
+            tackFileType = "image"
+        except IOError:
+            tackFileType = "not image"
+
+        tack_file = file_input
+    elif img_url:
+        r = requests.get(img_url)
+        img_temp = NamedTemporaryFile(delete=True)
+        img_temp.write(r.content)
+        img_temp.flush()
+        parsed_uri=urlparse(img_url)
+        domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+        print domain
+        tack_file = File(img_temp)
+        tackFileType="fromurl"
     #Save tack details
     TackImages(file_name=request.POST["tack_name"],
-               tack_file = request.FILES["file"],
+               tack_file = tack_file,
                file_type = tackFileType,
                tags=tagArray,
                username=get_user(request),
@@ -649,6 +664,7 @@ def edit_tack(request):
         domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
         print domain
         tack.tack_file = File(img_temp)
+        tack.file_type="fromurl"
         tack.bookmark = domain
     #Save updated tack
     tack.save()
