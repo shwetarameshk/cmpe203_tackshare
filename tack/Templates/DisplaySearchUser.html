@@ -12,6 +12,9 @@
 
     </script>
 
+        <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
 
     <title>Tackshare</title>
 </head>
@@ -31,9 +34,7 @@
         <div class="ui simple dropdown item">
             <i class="bookmark icon"></i>Actions<i class="dropdown icon"></i>
             <div class="menu">
-                <a class="item" href="/createtack">Create Tack</a>
-                <a class="item" href="/createboard">Create Board</a>
-                <a class="item" href="/newurltack">Create Tack from Url</a>
+                <a class="item" href="/FollowUser?userName={{ userName }}"rel="shadowbox">Follow user</a>
             </div>
         </div>
         <div class="ui simple dropdown item">
@@ -47,13 +48,8 @@
     </div>
 </div>
 
-<div>
-    <a href="/FollowUser?userName={{ userName }}"  rel="shadowbox" class="rounded ui image" style="float: right;">Follow user</a>
-</div>
-
-
 <section>
-    <div id="wrapper">
+    <div id="wrapper" style="width: 100%">
         <div class="ui large blue label">Public Boards</div>
         <div class = "ui five column grid">
             {% for board in publicBoards %}
@@ -73,9 +69,6 @@
         </div>
     </div>
 </section>
-
-
-
 
 </body>
 </html>
