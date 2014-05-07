@@ -527,7 +527,7 @@ def save_follow(request):
                 nameString = ''
             trimname = nameString.split()
             userInfo = User.objects.get(username=username)
-            send_mail("New Follower","You have a new follower. Login to your account http://www.takshare.com","tackshare@gmail.com",
+            send_mail("New Follower","You have a new follower \""+mainuser.username+"\" Login to your account http://www.takshare.com","tackshare@gmail.com",
                       [userInfo.email],fail_silently="false")
             user=Followers.objects.get(userName=mainuser)
             user.followersList.append(trimname)
