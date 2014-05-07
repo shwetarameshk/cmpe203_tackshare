@@ -504,11 +504,8 @@ def save_follow(request):
                         try:
                             print username
                             boards=Boards.objects.order_by('name').filter(username=inner)
-                            for boardName in boards:
-                                print boardName
-                                print boardName.name
-                                board = Boards.objects.get(name=boardName)
-                                #Add user name to board's list of visible users
+                            for board in boards:
+                                #Remove user name to board's list of visible users
                                 board.visible_to_users.remove(mainuser.username)
                                 board.save()
                             u.followersList.remove(inner)
@@ -527,7 +524,7 @@ def save_follow(request):
                 nameString = ''
             trimname = nameString.split()
             userInfo = User.objects.get(username=username)
-            send_mail("New Follower","You have a new follower \""+mainuser.username+"\" Login to your account http://www.takshare.com","tackshare@gmail.com",
+            send_mail("New Follower","You have a new follower \""+mainuser.username+"\" Login to your account http://www.tackshare.com","tackshare@gmail.com",
                       [userInfo.email],fail_silently="false")
             user=Followers.objects.get(userName=mainuser)
             user.followersList.append(trimname)
@@ -541,16 +538,13 @@ def save_follow(request):
             Followers(userName= get_user(request), followersList=trimname).save()
         finally:
             print username
-            boards=Boards.objects.order_by('name').filter(username=username)
+            boards=Boards.objects.order_by('name').filter(username=username,privacy='Public')
             print boards
-            for boardName in boards:
-                print boardName
-                print mainuser
-                b = Boards.objects.get(name=boardName)
+            for board in boards:
                 #Add user name to board's list of visible users
-                b.visible_to_users.append(mainuser.username)
-                print b.visible_to_users
-                b.save()
+                board.visible_to_users.append(mainuser.username)
+                print board.visible_to_users
+                board.save()
         print "saved!"
     done="done"
     return render_to_response("FollowUser.html",{'userName':username,'Done':done})
@@ -604,9 +598,10 @@ def confirm_fav(request):
     else:
         tack.is_favorite=True
     tack.save()
-    boards = Boards.objects.filter(username=get_user(request))
-    tags = ''.join(tack.tags)
-    return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
+    # boards = Boards.objects.filter(username=get_user(request))
+    # tags = ''.join(tack.tags)
+    #return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
+    return redirect("/displayTack?tackName="+tackName)
 
 
 @csrf_exempt

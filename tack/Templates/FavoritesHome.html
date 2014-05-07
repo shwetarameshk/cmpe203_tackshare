@@ -16,11 +16,15 @@
         Shadowbox.init();
     </script>
 
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style2.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/animate-custom.css" />
+
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 <div class="ui inverted tiered menu">
-        <div class="left menu">
+    <div class="left menu">
         <div class="item">
             <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
         </div>
@@ -51,45 +55,41 @@
     </div>
 </div>
 
-<section class="container">
-    <div id="wrapper">
-    {% if  tacks == "" %}
-        <div class="ui label">You do not have any tacks marked as Favorite yet!{% endif %}</div>
-
-
-    <div class = "ui five column grid">
-
-
-        {% for tack in tacks %}
-            <div class="column">
-                <div class="ui segment">
-                    <a href="/displayTack?tackName={{ tack.file_name }}"  rel="shadowbox" class="rounded ui image" title={{ tack.file_name }}>
-                        {% if tack.file_type == "image" %}
-                            <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
-                        {% elif tack.file_type == "fromurl" %}
-                                    <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
-                        {% else %}
-                            <video width="200" height="200" controls>
-                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/webm">
-                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/ogg">
-                                <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        {% endif %}
-                        {% if tack.is_favorite %}
-                            <a class="ui right blue corner label item" style="text-decoration:none;">
-                                <i class="star icon"></i>
-                            </a>
-                        {% else %}
-                            <a class="ui right red corner label item" style="text-decoration:none;">
-                                <i class="star icon"></i>
-                            </a>
-                        {% endif %}
-                    </a>
+<section class="container" style="height: auto">
+    <div id="wrapper" style="width: 100%">
+        {% if  tacks == "" %}
+            <div class="ui label">You do not have any tacks marked as Favorite yet!</div>{% endif %}
+        <div class = "ui five column grid">
+            {% for tack in tacks %}
+                <div class="column">
+                    <div class="ui segment">
+                        <a href="/displayTack?tackName={{ tack.file_name }}"  rel="shadowbox" class="rounded ui image" title={{ tack.file_name }}>
+                            {% if tack.file_type == "image" %}
+                                <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
+                            {% elif tack.file_type == "fromurl" %}
+                                <img src="{{ MEDIA_URL }}{{ tack.tack_file }}" alt='No Image' width="200" height="200" title={{ tack.file_name }}/>
+                            {% else %}
+                                <video width="200" height="200" controls>
+                                    <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/webm">
+                                    <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/ogg">
+                                    <source src="{{ MEDIA_URL }}{{tack.tack_file}}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% endif %}
+                            {% if tack.is_favorite %}
+                                <a class="ui right blue corner label item" style="text-decoration:none;">
+                                    <i class="star icon"></i>
+                                </a>
+                            {% else %}
+                                <a class="ui right red corner label item" style="text-decoration:none;">
+                                    <i class="star icon"></i>
+                                </a>
+                            {% endif %}
+                        </a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
     </div>
 </section>
 
