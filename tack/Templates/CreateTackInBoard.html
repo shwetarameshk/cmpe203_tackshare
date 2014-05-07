@@ -21,7 +21,7 @@
         //Function to submit the form
         function execute()
         {
-            if(document.getElementById('file').value!=''||document.getElementById('tack_url').value!='')
+            if(document.getElementById('file').value!=''||document.getElementById('img_url').value!='')
             {
                 document.sender.submit();
             }
@@ -83,9 +83,15 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label for="tack_url">URL:</label>
+                            <label for="img_url">Or URL:</label>
                             <div class="input">
-                                <input type="url" id="tack_url" name="tack_url" placeholder="URL to tack"></br>
+                                <input type="url" id="img_url" name="img_url" placeholder="URL of image/video"></br>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="tack_url">Link to website:</label>
+                            <div class="input">
+                                <input type="url" id="tack_url" name="tack_url" placeholder="Bookmark this link"></br>
                             </div>
                         </div>
                         <div class="field">

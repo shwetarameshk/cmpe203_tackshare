@@ -6,7 +6,7 @@
         //Function to submit the form
         function execute()
         {
-            if(document.getElementById('file').value!=''||document.getElementById('tack_url').value!='')
+            if(document.getElementById('file').value!=''||document.getElementById('img_url').value!='')
             {
                 document.sender.submit();
             }
@@ -93,12 +93,12 @@
     </style>
     <meta charset="UTF-8" />
     <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
-{##}
-{#    <script type="text/javascript">#}
-{#        $('.ui.selection.dropdown')#}
-{#            .dropdown()#}
-{#        ;#}
-{#    </script>#}
+    {##}
+    {#    <script type="text/javascript">#}
+    {#        $('.ui.selection.dropdown')#}
+    {#            .dropdown()#}
+    {#        ;#}
+    {#    </script>#}
     <link rel="stylesheet" type="text/css" href="/static/css/semantic/semantic.min.css" />
     <script type="text/javascript" src="/static/css/semantic/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/shadowbox/shadowbox.css">
@@ -115,7 +115,7 @@
 </head>
 <body>
 <div class="ui inverted tiered menu">
-        <div class="left menu">
+    <div class="left menu">
         <div class="item">
             <img src="/static/images/tackshare.png" alt="TackShare"  width="300" height="50">
         </div>
@@ -163,9 +163,15 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label for="tack_url">URL:</label>
+                            <label for="img_url">Or URL:</label>
                             <div class="input">
-                                <input type="url" id="tack_url" name="tack_url" placeholder="URL to be added as bookmark"></br>
+                                <input type="url" id="img_url" name="img_url" placeholder="URL of image/video"></br>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="tack_url">Link to website:</label>
+                            <div class="input">
+                                <input type="url" id="tack_url" name="tack_url" placeholder="Bookmark this link"></br>
                             </div>
                         </div>
                         <div class="field">
@@ -176,23 +182,12 @@
                         </div>
                         <div class="field">
                             <label>Add to Existing Board:</label>
-{#                            <div class="ui selection dropdown">#}
-{#                                <input type="hidden" name="ex_board">#}
-{#                                <div class="default text">Add to Existing Board:</div>#}
-{#                                <i class="dropdown icon"></i>#}
-{#                                <div class="menu">#}
-{#                                    {% for board in boards %}#}
-{#                                        <div class="item" data-value="{{ board.name }}">{{ board.name }}</div>#}
-{#                                    {% endfor %}#}
-{#                                </div>#}
-{#                            </div>#}
-
-                                                        <select name="ex_board">
-                                                            <option value=""></option>
-                                                            {% for board in boards %}
-                                                                <option value="{{ board.name }}">{{ board.name }}</option>
-                                                            {% endfor %}
-                                                        </select><br>
+                            <select name="ex_board">
+                                <option value=""></option>
+                                {% for board in boards %}
+                                    <option value="{{ board.name }}">{{ board.name }}</option>
+                                {% endfor %}
+                            </select><br>
                         </div>
                         <a href="#" id="createBoardForm"> OR Create New Board</a>
                         <input id="new_board" name="new_board" type="hidden">

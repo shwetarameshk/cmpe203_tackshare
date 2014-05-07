@@ -154,7 +154,8 @@ def save_tack(request):
     """
     This method is used to save a new tack.
     """
-    img_url = request.POST["tack_url"]
+    img_url = request.POST["img_url"]
+    bookmark_url = request.POST["tack_url"]
     file_input = request.FILES.get('file')
     if request.POST["new_board"]!="":
         boardName = request.POST["new_board"]
@@ -173,13 +174,12 @@ def save_tack(request):
             tagArray.append(str(ts))
         print tagArray
         print str(tagArray)
-    if (file_input):
+    if file_input:
         try:
             im=Image.open(request.FILES["file"])
             tackFileType = "image"
         except IOError:
             tackFileType = "not image"
-
         tack_file = file_input
     elif img_url:
         r = requests.get(img_url)
@@ -205,8 +205,6 @@ def save_tack(request):
     tack_name = request.POST["tack_name"]
     board.tacks.append(tack_name)
     board.save()
-    tackNames = board.tacks
-    tacks = TackImages.objects.filter(file_name__in=tackNames)
     return redirect("/board?boardName="+boardName)
 
 @login_required
@@ -505,7 +503,7 @@ def save_follow(request):
                             print username
                             boards=Boards.objects.order_by('name').filter(username=inner)
                             for board in boards:
-                                #Remove user name to board's list of visible users
+                                #Remove user name from board's list of visible users
                                 board.visible_to_users.remove(mainuser.username)
                                 board.save()
                             u.followersList.remove(inner)
@@ -598,9 +596,6 @@ def confirm_fav(request):
     else:
         tack.is_favorite=True
     tack.save()
-    # boards = Boards.objects.filter(username=get_user(request))
-    # tags = ''.join(tack.tags)
-    #return render_to_response("DisplayTack.html",{'MEDIA_URL': settings.MEDIA_URL, 'tack':tack, 'boards' : boards, 'tags' : tags})
     return redirect("/displayTack?tackName="+tackName)
 
 
