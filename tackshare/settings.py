@@ -17,10 +17,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lf!v%im7%_1cc*7c1hbn0+m8qur42$!d=k^o7%#7nh6gyq-u3-'
+#SECRET_KEY = 'lf!v%im7%_1cc*7c1hbn0+m8qur42$!d=k^o7%#7nh6gyq-u3-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -64,8 +64,8 @@ TEMPLATE_DIRS = 'tack/Templates'
 STATIC_ROOT = 'tack/static/'
 MEDIA_ROOT = 'tack/media/'
 MEDIA_URL = 'media/'
-FACEBOOK_APP_ID = '285287374980377'
-FACEBOOK_APP_SECRET = '2f569363c04d6e655424d5bd8883ffd8'
+#FACEBOOK_APP_ID = '285287374980377'
+#FACEBOOK_APP_SECRET = '2f569363c04d6e655424d5bd8883ffd8'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
